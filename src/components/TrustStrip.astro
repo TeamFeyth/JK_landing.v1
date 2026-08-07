@@ -1,0 +1,37 @@
+---
+import { copy } from '../data/copy';
+import Icon from './Icon.astro';
+---
+
+<section class="trust">
+  <div class="wrap trust-grid">
+    {
+      copy.trust.map((item) => (
+        <div class="trust-item">
+          <Icon name={item.icon as any} size={28} class="trust-icon" />
+          <div>
+            <p class="t-h3">
+              <span class="bi-en">{item.en}</span>
+              <span class="bi-es">{item.es}</span>
+            </p>
+            <p class="t-caption trust-sub">
+              <span class="bi-en">{item.subEn}</span>
+              <span class="bi-es">{item.subEs}</span>
+            </p>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .trust { background: var(--c-concrete); padding-block: var(--s-12); }
+  .trust-grid { display: grid; gap: var(--s-8); }
+  .trust-item { display: flex; gap: var(--s-4); align-items: flex-start; }
+  .trust-icon { color: var(--c-red); flex-shrink: 0; }
+  .trust-sub { color: var(--c-slate); margin-top: var(--s-1); }
+
+  @media (min-width: 600px) { .trust-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .trust-grid { grid-template-columns: repeat(4, 1fr); } }
+</style>

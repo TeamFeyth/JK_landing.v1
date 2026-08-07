@@ -1,0 +1,269 @@
+---
+/* Formulario de leads. Se construye una vez y se usa 3 veces:
+   hero, popup y bottom. Cada instancia manda su propio `source`. */
+import { copy } from '../data/copy';
+import Bilingual from './Bilingual.astro';
+
+interface Props {
+  source: 'hero' | 'popup' | 'bottom';
+  headline: { en: string; es: string };
+  sub: { en: string; es: string };
+  headingTag?: string;
+  variant?: 'panel' | 'bare';
+}
+const { source, headline, sub, headingTag = 'h2', variant = 'panel' } = Astro.props;
+const f = copy.form;
+const id = (n: string) => `${source}-${n}`;
+const HeadingTag = headingTag as any;
+---
+
+<div class:list={['lead-form', variant === 'panel' && 'lead-form-panel']}>
+  <HeadingTag class="t-h2 lead-form-title">
+    <span class="bi-en">{headline.en}</span>
+    <span class="bi-es">{headline.es}</span>
+  </HeadingTag>
+  <Bilingual en={sub.en} es={sub.es} class="t-caption lead-form-sub" />
+
+  <form data-lead-form data-source={source} novalidate>
+    <!-- Trampa de spam. Si viene llena, el envio se descarta en silencio -->
+    <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+    <div class="field" data-field="name">
+      <input
+        class="field-input"
+        id={id('name')}
+        name="name"
+        type="text"
+        placeholder=" "
+        autocomplete="name"
+        required
+      />
+      <label class="field-label" for={id('name')}>
+        {f.fields.name.en} <span class="req">*</span>
+        <span class="lbl-es"> / {f.fields.name.es}</span>
+      </label>
+      <p class="field-error" data-error>
+        {f.errors.name.en} <em>{f.errors.name.es}</em>
+      </p>
+    </div>
+
+    <div class="field" data-field="phone">
+      <input
+        class="field-input"
+        id={id('phone')}
+        name="phone"
+        type="tel"
+        inputmode="tel"
+        placeholder=" "
+        autocomplete="tel"
+        maxlength="14"
+        required
+      />
+      <label class="field-label" for={id('phone')}>
+        {f.fields.phone.en} <span class="req">*</span>
+        <span class="lbl-es"> / {f.fields.phone.es}</span>
+      </label>
+      <p class="field-error" data-error>
+        {f.errors.phone.en} <em>{f.errors.phone.es}</em>
+      </p>
+    </div>
+
+    <div class="field" data-field="email">
+      <input
+        class="field-input"
+        id={id('email')}
+        name="email"
+        type="email"
+        placeholder=" "
+        autocomplete="email"
+        required
+      />
+      <label class="field-label" for={id('email')}>
+        {f.fields.email.en} <span class="req">*</span>
+        <span class="lbl-es"> / {f.fields.email.es}</span>
+      </label>
+      <p class="field-error" data-error>
+        {f.errors.email.en} <em>{f.errors.email.es}</em>
+      </p>
+    </div>
+
+    <div class="field" data-field="open_loan">
+      <label class="field-label-static" for={id('open_loan')}>
+        {f.fields.openLoan.en} <span class="req">*</span>
+        <span class="lbl-es">{f.fields.openLoan.es}</span>
+      </label>
+      <select class="field-select" id={id('open_loan')} name="open_loan" data-empty="true" required>
+        <option value="" selected disabled hidden>{f.fields.selectOne.en} / {f.fields.selectOne.es}</option>
+        <option value="Yes">{f.fields.yes.en} / {f.fields.yes.es}</option>
+        <option value="No">{f.fields.no.en} / {f.fields.no.es}</option>
+      </select>
+      <p class="field-error" data-error>
+        {f.errors.select.en} <em>{f.errors.select.es}</em>
+      </p>
+    </div>
+
+    <div class="field" data-field="employed">
+      <label class="field-label-static" for={id('employed')}>
+        {f.fields.employed.en} <span class="req">*</span>
+        <span class="lbl-es">{f.fields.employed.es}</span>
+      </label>
+      <select class="field-select" id={id('employed')} name="employed" data-empty="true" required>
+        <option value="" selected disabled hidden>{f.fields.selectOne.en} / {f.fields.selectOne.es}</option>
+        <option value="Yes">{f.fields.yes.en} / {f.fields.yes.es}</option>
+        <option value="No">{f.fields.no.en} / {f.fields.no.es}</option>
+      </select>
+      <p class="field-error" data-error>
+        {f.errors.select.en} <em>{f.errors.select.es}</em>
+      </p>
+    </div>
+
+    <!-- Campos ocultos. Se llenan desde el navegador antes de enviar -->
+    <input type="hidden" name="source" value={source} />
+    <input type="hidden" name="stock" value="" data-stock />
+    <input type="hidden" name="page_url" value="" />
+    <input type="hidden" name="referrer" value="" />
+    <input type="hidden" name="submitted_at" value="" />
+    <input type="hidden" name="fbc" value="" />
+    <input type="hidden" name="fbp" value="" />
+    <input type="hidden" name="utm_source" value="" />
+    <input type="hidden" name="utm_medium" value="" />
+    <input type="hidden" name="utm_campaign" value="" />
+    <input type="hidden" name="utm_content" value="" />
+    <input type="hidden" name="utm_term" value="" />
+    <!-- PENDIENTE reCAPTCHA v3: aqui entra el token cuando llegue la site key -->
+    <input type="hidden" name="recaptcha_token" value="" data-recaptcha />
+
+    <button class="btn btn-primary btn-lg btn-block" type="submit" data-submit>
+      {f.submit}
+    </button>
+    <span class="btn-es">{f.submitEs}</span>
+
+    <p class="field-error form-error" data-form-error>
+      {f.errors.network.en} <em>{f.errors.network.es}</em>
+    </p>
+
+    <p class="t-caption consent">
+      <span class="bi-en">{f.consent.en}</span>
+      <span class="bi-es">{f.consent.es}</span>
+    </p>
+  </form>
+</div>
+
+<style>
+  .lead-form-panel {
+    background: var(--c-white);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius);
+    padding: var(--s-6);
+  }
+  .lead-form-title { margin-bottom: var(--s-2); }
+  .lead-form-sub { color: var(--c-slate); margin-bottom: var(--s-6); }
+  .consent { color: var(--c-slate); margin-top: var(--s-4); }
+  .form-error { margin-top: var(--s-4); }
+  form[data-state='error'] .form-error { display: block; }
+</style>
+
+<script>
+  import { formatPhone, isValidUsPhone, isValidEmail, isValidName } from '../lib/validation';
+  import { collectContext } from '../lib/tracking';
+
+  const WEBHOOK = import.meta.env.PUBLIC_WEBHOOK_URL ?? '';
+  const SENDING = 'Sending…';
+
+  function markField(el: Element | null, invalid: boolean) {
+    const field = el?.closest('[data-field]');
+    if (field) field.setAttribute('data-invalid', String(invalid));
+  }
+
+  document.querySelectorAll<HTMLFormElement>('form[data-lead-form]').forEach((form) => {
+    const source = form.dataset.source ?? 'unknown';
+    const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+    const phone = form.querySelector<HTMLInputElement>('input[name="phone"]')!;
+
+    // Formato en vivo del telefono
+    phone.addEventListener('input', () => {
+      const pos = phone.selectionStart ?? 0;
+      const before = phone.value.length;
+      phone.value = formatPhone(phone.value);
+      const after = phone.value.length;
+      if (pos < before) phone.setSelectionRange(pos + (after - before), pos + (after - before));
+    });
+
+    // Los select necesitan saber si siguen vacios para la etiqueta flotante
+    form.querySelectorAll<HTMLSelectElement>('select').forEach((sel) => {
+      sel.addEventListener('change', () => {
+        sel.dataset.empty = sel.value === '' ? 'true' : 'false';
+        markField(sel, false);
+      });
+    });
+
+    // Limpia el error en cuanto la persona corrige
+    form.querySelectorAll<HTMLInputElement>('.field-input').forEach((input) => {
+      input.addEventListener('input', () => markField(input, false));
+    });
+
+    function validate(): boolean {
+      const data = new FormData(form);
+      const checks: Array<[string, boolean]> = [
+        ['name', isValidName(String(data.get('name') ?? ''))],
+        ['phone', isValidUsPhone(String(data.get('phone') ?? ''))],
+        ['email', isValidEmail(String(data.get('email') ?? ''))],
+        ['open_loan', String(data.get('open_loan') ?? '') !== ''],
+        ['employed', String(data.get('employed') ?? '') !== ''],
+      ];
+
+      let firstBad: HTMLElement | null = null;
+      for (const [name, ok] of checks) {
+        const el = form.querySelector<HTMLElement>(`[name="${name}"]`);
+        markField(el, !ok);
+        if (!ok && !firstBad) firstBad = el;
+      }
+      firstBad?.focus();
+      return checks.every(([, ok]) => ok);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      form.removeAttribute('data-state');
+
+      // Bot: sale sin avisar
+      if (String(new FormData(form).get('company') ?? '') !== '') return;
+      if (!validate()) return;
+
+      // Contexto de atribucion
+      const stock = form.querySelector<HTMLInputElement>('[data-stock]')?.value ?? '';
+      const ctx = collectContext(source, stock);
+      for (const [key, value] of Object.entries(ctx)) {
+        const hidden = form.querySelector<HTMLInputElement>(`input[type="hidden"][name="${key}"]`);
+        if (hidden) hidden.value = String(value);
+      }
+
+      submit.disabled = true;
+      const label = submit.textContent;
+      submit.textContent = SENDING;
+
+      const payload = Object.fromEntries(new FormData(form).entries());
+      delete payload.company;
+
+      try {
+        if (!WEBHOOK) {
+          // Sin webhook configurado todavia. Se registra y se continua.
+          console.warn('PUBLIC_WEBHOOK_URL sin configurar. Payload:', payload);
+        } else {
+          const res = await fetch(WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) throw new Error(String(res.status));
+        }
+        window.location.href = `/thank-you/?source=${encodeURIComponent(source)}`;
+      } catch (err) {
+        console.error('Fallo el envio del lead', err);
+        form.setAttribute('data-state', 'error');
+        submit.disabled = false;
+        submit.textContent = label ?? '';
+      }
+    });
+  });
+</script>

@@ -1,0 +1,200 @@
+/* Componentes compartidos: botones, campos de formulario, chips */
+
+/* ============ BOTONES ============
+   Reglas: radio 2px siempre, un solo primario por pantalla,
+   etiquetas en MAYUSCULA, solo cambia color en hover, nunca se mueven. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  font-family: var(--f-body);
+  font-weight: 700;
+  font-size: var(--fs-button);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: var(--radius);
+  border: 2px solid transparent;
+  cursor: pointer;
+  min-width: 96px;
+  max-width: 480px;
+  transition: background-color 150ms ease-out, border-color 150ms ease-out, color 150ms ease-out;
+}
+
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Tamanos. El area tactil nunca baja de 44x44 */
+.btn-lg { height: var(--btn-lg); padding: 0 36px; font-size: 16px; }
+.btn-md { height: var(--btn-md); padding: 0 28px; font-size: 15px; }
+.btn-sm { height: var(--btn-sm); padding: 0 20px; font-size: 14px; }
+
+/* Primario. Uno por pantalla */
+.btn-primary {
+  background: var(--c-red);
+  color: var(--c-white);
+  border-color: var(--c-red);
+}
+.btn-primary:hover { background: #c92a21; border-color: #c92a21; }
+.btn-primary:active { background: #ab241c; border-color: #ab241c; }
+
+/* Secundario. Contorno 2px en todos los tamanos */
+.btn-secondary {
+  background: transparent;
+  color: var(--c-ink);
+  border-color: var(--c-ink);
+}
+.btn-secondary:hover { background: var(--c-ink); color: var(--c-white); }
+
+/* Secundario sobre fondo oscuro */
+.btn-secondary-inv {
+  background: transparent;
+  color: var(--c-white);
+  border-color: var(--c-white);
+}
+.btn-secondary-inv:hover { background: var(--c-white); color: var(--c-ink); }
+
+.btn-block { display: flex; width: 100%; max-width: none; }
+
+/* Enlace de texto. Siempre subrayado para que lea como enlace */
+.link {
+  color: var(--c-red);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 700;
+}
+.link:hover { color: var(--c-ink); }
+
+/* Linea en espanol debajo de un boton o grupo de botones.
+   Los botones llevan etiqueta solo en ingles para respetar la altura fija. */
+.btn-es {
+  display: block;
+  margin-top: var(--s-2);
+  font-size: var(--fs-caption);
+  font-style: italic;
+  color: var(--c-slate);
+}
+
+/* ============ CAMPOS DE FORMULARIO ============
+   Texto: la etiqueta vive dentro del campo y sube al recibir foco.
+   Select: la etiqueta va fija arriba, porque adentro ya vive el
+   placeholder "Select one" y las dos se encimarian. */
+
+.field { position: relative; margin-bottom: var(--s-6); }
+
+.field-input,
+.field-select {
+  width: 100%;
+  background: var(--c-white);
+  border: 1px solid var(--c-hairline);
+  border-radius: var(--radius);
+  color: var(--c-ink);
+  transition: border-color 150ms ease-out;
+  appearance: none;
+}
+
+.field-input {
+  height: 56px;
+  padding: 22px var(--s-3) 8px;
+}
+
+.field-select {
+  height: var(--btn-md);
+  padding: 0 var(--s-8) 0 var(--s-3);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23111418' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--s-3) center;
+}
+/* Mientras no elijan, el texto se ve apagado */
+.field-select[data-empty='true'] { color: var(--c-slate); }
+
+.field-input:focus,
+.field-select:focus { border-color: var(--c-ink); }
+
+/* --- Etiqueta flotante, solo para campos de texto --- */
+.field-label {
+  position: absolute;
+  left: var(--s-3);
+  top: 18px;
+  color: var(--c-slate);
+  font-size: var(--fs-body);
+  line-height: 1.2;
+  pointer-events: none;
+  transition: top 150ms ease-out, font-size 150ms ease-out;
+}
+
+.field-input:focus + .field-label,
+.field-input:not(:placeholder-shown) + .field-label {
+  top: 8px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* Traduccion dentro del label. Se esconde cuando la etiqueta sube */
+.field-label .lbl-es { font-style: italic; font-size: 0.8em; opacity: 0.8; }
+.field-input:focus + .field-label .lbl-es,
+.field-input:not(:placeholder-shown) + .field-label .lbl-es { display: none; }
+
+/* --- Etiqueta fija, para los select --- */
+.field-label-static {
+  display: block;
+  margin-bottom: var(--s-2);
+  font-size: var(--fs-eyebrow);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-slate);
+}
+.field-label-static .lbl-es {
+  display: block;
+  margin-top: var(--s-1);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0.85;
+}
+
+/* Asterisco de obligatorio en rojo */
+.req { color: var(--c-red); }
+
+/* Error. Color funcional Caution, nunca decorativo */
+.field-error {
+  display: none;
+  margin-top: var(--s-2);
+  font-size: var(--fs-caption);
+  color: var(--c-caution);
+  font-weight: 700;
+}
+.field[data-invalid='true'] .field-error { display: block; }
+.field[data-invalid='true'] .field-input,
+.field[data-invalid='true'] .field-select { border-color: var(--c-caution); }
+
+/* Trampa de spam. Invisible para personas, visible para bots */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+/* ============ CHIP REDONDO DE SPECS ============
+   Unico lugar donde se permite radio 50% */
+.spec-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--c-concrete);
+  color: var(--c-slate);
+  flex-shrink: 0;
+}

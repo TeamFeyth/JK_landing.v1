@@ -1,0 +1,99 @@
+---
+/* Footer en Lot Navy. La guia lo permite solo aqui y en bloques de
+   financiamiento, nunca en botones. */
+import { site } from '../data/site';
+import { copy } from '../data/copy';
+import Logo from './Logo.astro';
+---
+
+<footer class="footer" id="footer" data-footer>
+  <div class="wrap footer-grid">
+    <div>
+      <Logo inverse />
+      <address class="footer-address t-body">
+        {site.address.street}<br />
+        {site.address.city}, {site.address.state} {site.address.zip}
+      </address>
+      <a class="link footer-link" href={site.directionsUrl} rel="noopener">
+        {copy.footer.directions.en}
+      </a>
+      <span class="btn-es footer-es">{copy.footer.directions.es}</span>
+
+      <p class="footer-phone">
+        <a class="t-h3 footer-phone-link" href={`tel:${site.phoneHref}`}>{site.phoneDisplay}</a>
+      </p>
+    </div>
+
+    <div>
+      <p class="t-eyebrow footer-heading">
+        {copy.footer.hours.en} <i>/ {copy.footer.hours.es}</i>
+      </p>
+      <ul class="footer-hours t-body">
+        {
+          site.hours.map((h) => (
+            <li>
+              <span>{h.en} <i>/ {h.es}</i></span>
+              <span>{h.closed ? copy.footer.closed.en : h.time}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div>
+      <p class="t-eyebrow footer-heading">Legal</p>
+      <ul class="footer-legal t-body">
+        <li><a href={site.legal.privacyUrl} rel="noopener">{copy.footer.privacy.en} <i>/ {copy.footer.privacy.es}</i></a></li>
+        <li><a href={site.legal.privacyUrl} rel="noopener">{copy.footer.terms.en} <i>/ {copy.footer.terms.es}</i></a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <p class="t-caption footer-disclaimer">
+      <span class="bi-en">{copy.footer.disclaimer.en}</span>
+      <span class="bi-es">{copy.footer.disclaimer.es}</span>
+    </p>
+    <p class="t-caption footer-copy">&copy; {new Date().getFullYear()} {site.name}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--c-navy);
+    color: var(--c-white);
+    padding-block: var(--s-16) var(--s-8);
+  }
+  .footer-grid { display: grid; gap: var(--s-12); }
+  .footer-address { font-style: normal; margin-block: var(--s-4) var(--s-2); }
+  .footer-link { color: var(--c-white); }
+  .footer-es { color: rgba(255, 255, 255, 0.65); }
+  .footer-phone { margin-top: var(--s-6); }
+  .footer-phone-link { text-decoration: none; }
+  .footer-phone-link:hover { color: var(--c-red); }
+
+  .footer-heading { color: rgba(255, 255, 255, 0.6); margin-bottom: var(--s-4); }
+  .footer-heading i, .footer-hours i, .footer-legal i {
+    font-style: italic; font-weight: 400; text-transform: none; letter-spacing: 0; opacity: 0.7;
+  }
+  .footer-hours li {
+    display: flex; justify-content: space-between; gap: var(--s-4);
+    padding-block: var(--s-1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .footer-legal { display: grid; gap: var(--s-2); }
+  .footer-legal a { text-decoration: underline; text-underline-offset: 3px; }
+
+  .footer-bottom {
+    margin-top: var(--s-12);
+    padding-top: var(--s-6);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .footer-disclaimer { max-width: var(--measure); }
+  .footer-copy { margin-top: var(--s-4); }
+
+  @media (min-width: 800px) {
+    .footer-grid { grid-template-columns: 1.2fr 1fr 0.8fr; gap: var(--gutter); }
+  }
+</style>

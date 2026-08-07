@@ -1,0 +1,71 @@
+---
+/* Boton flotante de llamada. Fijo abajo a la derecha, persistente en scroll.
+   Va en Ink y no en rojo a proposito: el rojo esta reservado para el unico
+   primario de la pantalla, que es el submit del formulario. Dos rojos
+   compitiendo van contra la guia.
+   Se esconde cuando el formulario de abajo o el footer entran en pantalla,
+   para no taparlos en movil. */
+import { site } from '../data/site';
+import { copy } from '../data/copy';
+import Icon from './Icon.astro';
+---
+
+<a class="fab" href={`tel:${site.phoneHref}`} data-fab>
+  <Icon name="phone" size={20} />
+  <span class="fab-label">
+    <span class="fab-en">{copy.floatingCall.en}</span>
+    <span class="fab-es">{copy.floatingCall.es}</span>
+  </span>
+</a>
+
+<style>
+  .fab {
+    position: fixed;
+    right: var(--s-4);
+    bottom: var(--s-4);
+    z-index: 45;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 48px;
+    padding: var(--s-2) var(--s-4);
+    background: var(--c-ink);
+    color: var(--c-white);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: background-color 150ms ease-out, opacity 150ms ease-out;
+  }
+  .fab:hover { background: var(--c-red); }
+  .fab[hidden] { display: none; }
+
+  .fab-label { display: flex; flex-direction: column; line-height: 1.1; }
+  .fab-en {
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .fab-es { font-size: 11px; font-style: italic; opacity: 0.8; }
+
+  @media (min-width: 768px) {
+    .fab { right: var(--s-8); bottom: var(--s-8); }
+  }
+</style>
+
+<script>
+  const fab = document.querySelector<HTMLElement>('[data-fab]');
+  const zones = document.querySelectorAll('[data-footer], form[data-source="bottom"]');
+
+  if (fab && zones.length) {
+    const visible = new Set<Element>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) visible.add(e.target);
+          else visible.delete(e.target);
+        }
+        fab.hidden = visible.size > 0;
+      },
+      { rootMargin: '0px 0px -80px 0px' }
+    );
+    zones.forEach((z) => io.observe(z));
+  }
+</script>

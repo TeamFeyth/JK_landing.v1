@@ -1,0 +1,69 @@
+---
+/* Banner de cookies. Guarda la decision y libera el pixel de Meta.
+   Si PUBLIC_REQUIRE_COOKIE_CONSENT es "false", el pixel carga de una
+   y el banner solo informa. */
+import { copy } from '../data/copy';
+---
+
+<div class="cookies" data-cookies hidden>
+  <div class="wrap cookies-inner">
+    <p class="t-caption cookies-text">
+      <span class="bi-en">{copy.cookies.body.en}</span>
+      <span class="bi-es">{copy.cookies.body.es}</span>
+    </p>
+    <div class="cookies-actions">
+      <button class="btn btn-secondary-inv btn-sm" type="button" data-cookies-decline>
+        {copy.cookies.decline}
+      </button>
+      <button class="btn btn-secondary-inv btn-sm" type="button" data-cookies-accept>
+        {copy.cookies.accept}
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cookies {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 70;
+    background: var(--c-ink);
+    color: var(--c-white);
+    padding-block: var(--s-4);
+  }
+  .cookies[hidden] { display: none; }
+  .cookies-inner { display: grid; gap: var(--s-4); }
+  .cookies-text { max-width: var(--measure); }
+  .cookies-actions { display: flex; gap: var(--s-4); }
+
+  @media (min-width: 768px) {
+    .cookies-inner { grid-template-columns: 1fr auto; align-items: center; }
+  }
+</style>
+
+<script>
+  const KEY = 'jk_cookie_consent';
+  const banner = document.querySelector<HTMLElement>('[data-cookies]');
+
+  function read(): string | null {
+    try { return localStorage.getItem(KEY); } catch { return null; }
+  }
+  function write(v: string) {
+    try { localStorage.setItem(KEY, v); } catch { /* modo privado */ }
+  }
+
+  if (banner) {
+    if (read() === null) banner.hidden = false;
+
+    banner.querySelector('[data-cookies-accept]')?.addEventListener('click', () => {
+      write('granted');
+      banner.hidden = true;
+      window.dispatchEvent(new CustomEvent('jk:consent', { detail: 'granted' }));
+    });
+
+    banner.querySelector('[data-cookies-decline]')?.addEventListener('click', () => {
+      write('denied');
+      banner.hidden = true;
+    });
+  }
+</script>

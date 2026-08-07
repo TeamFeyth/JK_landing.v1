@@ -1,0 +1,144 @@
+---
+/* Tarjeta de vehiculo. El enganche es siempre el numero mas grande.
+   Ano + marca + modelo, nunca apodos.
+   Los campos que aun no llegan de Auto Action estan en null y no se pintan. */
+import type { Vehicle } from '../data/vehicles';
+import { money, miles } from '../data/vehicles';
+import { copy } from '../data/copy';
+import Icon from './Icon.astro';
+
+interface Props { v: Vehicle }
+const { v } = Astro.props;
+const L = copy.vehicles.labels;
+const title = [v.year, v.make, v.model].join(' ');
+const freq = v.paymentFrequency === 'bi-weekly' ? 'Bi-weekly' : v.paymentFrequency === 'monthly' ? 'Monthly' : null;
+---
+
+<article class="vcard">
+  <div class="vcard-photo">
+    {
+      v.photo ? (
+        <img src={v.photo} alt={v.photoAlt ?? `${title} at John Kamal Cars`} loading="lazy" width="640" height="480" />
+      ) : (
+        <div class="vcard-photo-empty">
+          <span class="t-caption">Photo pending</span>
+        </div>
+      )
+    }
+  </div>
+
+  <div class="vcard-body">
+    <h3 class="t-h3 vcard-title">
+      {title}{v.trim && <span class="vcard-trim"> {v.trim}</span>}
+    </h3>
+
+    <div class="vcard-specs t-caption">
+      {
+        v.mileage !== null && (
+          <span class="vcard-spec">
+            <span class="spec-chip"><Icon name="gauge" size={14} /></span>
+            {miles(v.mileage)} mi
+          </span>
+        )
+      }
+      {
+        v.stock && (
+          <span class="vcard-spec">
+            <span class="spec-chip"><Icon name="hash" size={14} /></span>
+            {L.stock.en} {v.stock}
+          </span>
+        )
+      }
+    </div>
+
+    <div class="vcard-numbers">
+      {
+        v.downPayment !== null && (
+          <div class="vcard-down">
+            <span class="t-eyebrow vcard-label">
+              {L.down.en} <i>/ {L.down.es}</i>
+            </span>
+            <span class="t-price vcard-down-value">{money(v.downPayment)}</span>
+          </div>
+        )
+      }
+
+      <div class="vcard-secondary">
+        {
+          v.payment !== null && (
+            <div>
+              <span class="t-eyebrow vcard-label">{freq ?? L.payment.en}</span>
+              <span class="vcard-value">{money(v.payment)}</span>
+            </div>
+          )
+        }
+        {
+          v.price !== null && (
+            <div>
+              <span class="t-eyebrow vcard-label">{L.price.en}</span>
+              <span class="vcard-value">{money(v.price)}</span>
+            </div>
+          )
+        }
+      </div>
+
+      {
+        (v.termMonths !== null || v.apr !== null) && (
+          <p class="t-caption vcard-terms">
+            {v.termMonths !== null && <>{L.term.en} {v.termMonths} mo</>}
+            {v.termMonths !== null && v.apr !== null && ' · '}
+            {v.apr !== null && <>{L.apr.en} {v.apr}%</>}
+          </p>
+        )
+      }
+    </div>
+
+    <div class="vcard-actions">
+      <a class="btn btn-secondary btn-sm" href={v.detailUrl} rel="noopener">
+        {copy.vehicles.viewDetails}
+      </a>
+      <button class="btn btn-secondary btn-sm" type="button" data-finance-me data-stock={v.stock ?? v.id}>
+        {copy.vehicles.financeMe}
+      </button>
+    </div>
+    <span class="btn-es">{copy.vehicles.cardActionsEs}</span>
+  </div>
+</article>
+
+<style>
+  .vcard {
+    display: flex;
+    flex-direction: column;
+    background: var(--c-white);
+    border: 1px solid var(--c-hairline);
+    border-radius: var(--radius);
+    overflow: hidden;
+    height: 100%;
+  }
+  /* Recorte 4:3 para tarjetas, segun la guia de fotografia */
+  .vcard-photo { aspect-ratio: 4 / 3; background: var(--c-concrete); }
+  .vcard-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .vcard-photo-empty {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; color: var(--c-slate);
+  }
+
+  .vcard-body { display: flex; flex-direction: column; padding: var(--s-6); gap: var(--s-4); }
+  .vcard-title { margin: 0; }
+  .vcard-trim { font-weight: 400; color: var(--c-slate); }
+
+  .vcard-specs { display: flex; flex-wrap: wrap; gap: var(--s-4); color: var(--c-slate); }
+  .vcard-spec { display: inline-flex; align-items: center; gap: var(--s-2); }
+
+  .vcard-numbers { display: grid; gap: var(--s-3); }
+  .vcard-label { display: block; color: var(--c-slate); }
+  .vcard-label i { font-style: italic; text-transform: none; letter-spacing: 0; }
+  /* El enganche manda: es el numero mas grande de la tarjeta */
+  .vcard-down-value { display: block; color: var(--c-red); }
+  .vcard-secondary { display: flex; gap: var(--s-6); }
+  .vcard-value { display: block; font-weight: 700; font-size: var(--fs-body); }
+  .vcard-terms { color: var(--c-slate); }
+
+  .vcard-actions { display: flex; gap: var(--s-4); margin-top: auto; }
+  .vcard-actions .btn { flex: 1; min-width: 0; }
+</style>

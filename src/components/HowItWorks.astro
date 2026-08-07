@@ -1,0 +1,53 @@
+---
+/* Tres pasos. La numeracion se justifica: es una secuencia real. */
+import { copy } from '../data/copy';
+---
+
+<section class="section how" id="how-it-works">
+  <div class="wrap">
+    <h2 class="t-h1 how-title">
+      <span class="bi-en">{copy.how.headline.en}</span>
+      <span class="bi-es">{copy.how.headline.es}</span>
+    </h2>
+
+    <ol class="how-grid">
+      {
+        copy.how.steps.map((step, i) => (
+          <li class="how-step">
+            <span class="how-num" aria-hidden="true">{i + 1}</span>
+            <h3 class="t-h3">
+              <span class="bi-en">{step.title.en}</span>
+              <span class="bi-es">{step.title.es}</span>
+            </h3>
+            <p class="t-body how-body">
+              <span class="bi-en">{step.body.en}</span>
+              <span class="bi-es">{step.body.es}</span>
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .how-title { margin-bottom: var(--s-12); }
+  .how-grid { display: grid; gap: var(--s-8); padding: 0; list-style: none; }
+  .how-step {
+    border-top: 2px solid var(--c-ink);
+    padding-top: var(--s-6);
+    display: grid;
+    gap: var(--s-3);
+  }
+  .how-num {
+    font-family: var(--f-display);
+    font-size: 40px;
+    line-height: 1;
+    color: var(--c-red);
+  }
+  .how-body { color: var(--c-slate); }
+
+  @media (min-width: 800px) {
+    .how-grid { grid-template-columns: repeat(3, 1fr); gap: var(--gutter); }
+  }
+</style>

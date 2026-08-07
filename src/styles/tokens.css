@@ -1,0 +1,74 @@
+/* Tokens de marca. Unica fuente de verdad: guideline for john kamal cars.MD */
+
+:root {
+  /* --- Color primario. Regla 60 / 30 / 10 --- */
+  --c-white: #ffffff;    /* fondo dominante, 60% */
+  --c-ink: #111418;      /* titulares, cuerpo, paneles oscuros, 30% */
+  --c-red: #e63329;      /* CTA, precios, la marca, 10% */
+
+  /* --- Apoyo ---
+     PENDIENTE: la guia nombra estos colores pero no dio el hex.
+     Confirmar con Feyth antes de produccion. Hairline si viene confirmado. */
+  --c-navy: #16273d;     /* Lot Navy. Solo footer y bloques de financiamiento */
+  --c-slate: #5b6572;    /* copy secundario */
+  --c-hairline: #dcdfe4; /* bordes. CONFIRMADO en la guia */
+  --c-concrete: #f3f4f6; /* paneles silenciosos, franjas de tabla */
+
+  /* --- Funcionales. Solo confirmaciones, errores y badges. Nunca decorativos --- */
+  --c-approved: #1b7f3b; /* PENDIENTE de hex oficial */
+  --c-caution: #b25e00;  /* PENDIENTE de hex oficial */
+
+  /* --- Tipografia --- */
+  --f-display: 'Archivo Black', 'Arial Black', Arial, sans-serif;
+  --f-body: 'Archivo Variable', Archivo, Arial, sans-serif;
+
+  /* Escala movil. Se sube en desktop mas abajo */
+  --fs-hero: 40px;
+  --fs-h1: 30px;
+  --fs-h2: 24px;
+  --fs-h3: 20px;
+  --fs-eyebrow: 11px;
+  --fs-body-lg: 18px;
+  --fs-body: 16px;
+  --fs-button: 14px;
+  --fs-price: 24px;
+  --fs-caption: 12px;
+
+  /* --- Espaciado. Todo multiplo de 8. El 4 es la unica excepcion --- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-24: 96px;
+
+  /* --- Layout --- */
+  --max-w: 1280px;
+  --page-x: 20px;
+  --gutter: 32px;
+  --measure: 680px;
+
+  /* --- Radio. 2px en todo. 50% solo en chips de specs del vehiculo --- */
+  --radius: 2px;
+
+  /* --- Alturas de boton --- */
+  --btn-lg: 56px;
+  --btn-md: 48px;
+  --btn-sm: 40px;
+
+  --header-h: 64px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --fs-hero: 56px;
+    --fs-h1: 40px;
+    --fs-h2: 28px;
+    --fs-button: 16px;
+    --page-x: 48px;
+    --header-h: 72px;
+  }
+}

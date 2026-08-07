@@ -1,0 +1,45 @@
+---
+/* Tipografias auto-hospedadas. Evita la peticion a Google Fonts, que pesa
+   en el LCP y por lo tanto en el ranking de calidad de los anuncios de Meta. */
+import '@fontsource-variable/archivo';
+import '@fontsource-variable/archivo/wght-italic.css';
+import '@fontsource/archivo-black';
+
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/components.css';
+
+import MetaPixel from '../components/MetaPixel.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  noindex?: boolean;
+}
+const { title, description = '', noindex = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={new URL(Astro.url.pathname, site.domain).href} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <MetaPixel />
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>

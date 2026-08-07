@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import FeaturedVehicles from '../components/FeaturedVehicles.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import LeadForm from '../components/LeadForm.astro';
+import Footer from '../components/Footer.astro';
+import FloatingCall from '../components/FloatingCall.astro';
+import LeadPopup from '../components/LeadPopup.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import { copy } from '../data/copy';
+---
+
+<Base title={copy.meta.title} description={copy.meta.description}>
+  <a class="skip-link" href="#lead-form">{copy.nav.skip.en} / {copy.nav.skip.es}</a>
+
+  <Header />
+
+  <main id="main">
+    <Hero />
+    <TrustStrip />
+    <FeaturedVehicles />
+    <HowItWorks />
+
+    <section class="section bottom-form" id="lead-form">
+      <div class="wrap bottom-form-inner">
+        <LeadForm
+          source="bottom"
+          headline={copy.form.bottomHeadline}
+          sub={copy.form.bottomSub}
+          headingTag="h2"
+        />
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <FloatingCall />
+  <LeadPopup />
+  <CookieBanner />
+</Base>
+
+<style>
+  .bottom-form { background: var(--c-concrete); }
+  .bottom-form-inner { max-width: 560px; margin-inline: auto; }
+</style>

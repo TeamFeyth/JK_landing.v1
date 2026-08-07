@@ -1,0 +1,82 @@
+---
+/* Hero. Izquierda: titular y bullets. Derecha: formulario, pegado en desktop.
+   El formulario es el ancla visual, no un accesorio.
+
+   El unico boton primario de esta pantalla es el submit del formulario.
+   El copy del cliente listaba ademas un CTA "Get Pre-Approved" arriba del
+   formulario, pero serian dos primarios en la misma vista y la guia lo prohibe.
+
+   PENDIENTE: foto real del lote de fondo (16:9, luz natural). Mientras tanto
+   queda el panel Ink solido. Cuando llegue la foto se agrega la imagen y el
+   velo negro al 55% que pide la guia. */
+import { copy } from '../data/copy';
+import LeadForm from './LeadForm.astro';
+import Icon from './Icon.astro';
+---
+
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <h1 class="t-hero hero-headline">
+        <span class="bi-en">{copy.hero.headline.en}</span>
+        <span class="bi-es">{copy.hero.headline.es}</span>
+      </h1>
+
+      <p class="t-body-lg hero-sub prose">
+        <span class="bi-en">{copy.hero.sub.en}</span>
+        <span class="bi-es">{copy.hero.sub.es}</span>
+      </p>
+
+      <ul class="hero-bullets">
+        {
+          copy.hero.bullets.map((b) => (
+            <li>
+              <Icon name="shield" size={20} class="hero-bullet-icon" />
+              <span>
+                <span class="bi-en">{b.en}</span>
+                <span class="bi-es">{b.es}</span>
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="hero-form">
+      <LeadForm
+        source="hero"
+        headline={copy.form.heroHeadline}
+        sub={copy.form.heroSub}
+        headingTag="h2"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background: var(--c-ink);
+    color: var(--c-white);
+    padding-block: var(--s-12);
+  }
+  .hero-grid { display: grid; gap: var(--s-12); }
+  .hero-headline { margin-bottom: var(--s-6); }
+  .hero-sub { color: rgba(255, 255, 255, 0.85); margin-bottom: var(--s-8); }
+
+  .hero-bullets { display: grid; gap: var(--s-4); }
+  .hero-bullets li { display: flex; align-items: flex-start; gap: var(--s-3); }
+  .hero-bullet-icon { color: var(--c-red); flex-shrink: 0; margin-top: 2px; }
+
+  @media (min-width: 900px) {
+    .hero { padding-block: var(--s-24); }
+    .hero-grid {
+      grid-template-columns: 1fr minmax(380px, 440px);
+      gap: var(--gutter);
+      align-items: start;
+    }
+    .hero-form {
+      position: sticky;
+      top: calc(var(--header-h) + var(--s-6));
+    }
+  }
+</style>

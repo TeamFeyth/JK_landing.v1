@@ -1,0 +1,71 @@
+---
+/* PLACEHOLDER. El logo real solo existe dentro del PDF de la guia.
+   Cuando llegue el SVG, reemplazar todo el bloque de abajo por:
+   <img src="/images/brand/logo-horizontal.svg" alt="John Kamal Cars" width="180" />
+
+   Minimos de la guia: horizontal 160px, stacked 96px, monograma 24px. */
+interface Props {
+  variant?: 'horizontal' | 'monogram';
+  inverse?: boolean;
+}
+const { variant = 'horizontal', inverse = false } = Astro.props;
+---
+
+<span class:list={['logo', inverse && 'logo-inv']} aria-label="John Kamal Cars">
+  <span class="logo-mark" aria-hidden="true">JK</span>
+  {
+    variant === 'horizontal' && (
+      <span class="logo-word" aria-hidden="true">
+        <span class="logo-name">John Kamal Cars</span>
+        <span class="logo-desc">In-house financing</span>
+      </span>
+    )
+  }
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-width: 160px;
+    text-decoration: none;
+  }
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: var(--c-red);
+    color: var(--c-white);
+    font-family: var(--f-display);
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    border-radius: var(--radius);
+    flex-shrink: 0;
+  }
+  .logo-word { display: flex; flex-direction: column; line-height: 1; }
+  .logo-name {
+    font-family: var(--f-display);
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: var(--c-ink);
+  }
+  .logo-desc {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--c-slate);
+    margin-top: 3px;
+  }
+  .logo-inv .logo-name { color: var(--c-white); }
+  .logo-inv .logo-desc { color: rgba(255, 255, 255, 0.7); }
+
+  /* Bajo el minimo horizontal se cae el descriptor primero */
+  @media (max-width: 400px) {
+    .logo-desc { display: none; }
+  }
+</style>

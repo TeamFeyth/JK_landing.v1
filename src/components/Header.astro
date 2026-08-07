@@ -1,0 +1,78 @@
+---
+/* Barra Ink. Enlaces 12px en mayuscula con tracking 0.08em, 24px de separacion.
+   Maximo siete elementos. Activo en rojo con subrayado de 2px.
+
+   NOTA: la guia pide un switch EN / ES a la derecha del nav, pero la decision
+   confirmada del proyecto es mostrar los dos idiomas juntos siempre. Un switch
+   contradiria eso, asi que no se incluye. Si Feyth lo pide, va aqui. */
+import { site } from '../data/site';
+import { copy } from '../data/copy';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+---
+
+<header class="header">
+  <div class="wrap header-inner">
+    <a href="/" class="header-logo" aria-label={site.name}>
+      <Logo inverse />
+    </a>
+
+    <nav class="header-nav" aria-label="Main">
+      <a href="#inventory">{copy.nav.inventory.en} <i>/ {copy.nav.inventory.es}</i></a>
+      <a href="#how-it-works">{copy.nav.howItWorks.en} <i>/ {copy.nav.howItWorks.es}</i></a>
+    </nav>
+
+    <a class="btn btn-secondary-inv btn-sm header-call" href={`tel:${site.phoneHref}`} data-call-link>
+      <Icon name="phone" size={16} />
+      <span class="header-call-label">{copy.nav.call.en} </span>{site.phoneDisplay}
+    </a>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--c-ink);
+    color: var(--c-white);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--s-6);
+    min-height: var(--header-h);
+  }
+  .header-logo { text-decoration: none; }
+  .header-nav {
+    display: none;
+    margin-left: auto;
+    gap: var(--s-6);
+  }
+  .header-nav a {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--c-white);
+    padding-block: var(--s-2);
+    border-bottom: 2px solid transparent;
+  }
+  .header-nav a:hover { color: var(--c-red); border-bottom-color: var(--c-red); }
+  .header-nav i {
+    font-style: italic;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.7;
+  }
+  .header-call { margin-left: auto; }
+  .header-call-label { display: none; }
+
+  @media (min-width: 768px) {
+    .header-nav { display: flex; }
+    .header-call { margin-left: 0; }
+    .header-call-label { display: inline; }
+  }
+</style>

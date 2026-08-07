@@ -1,0 +1,59 @@
+---
+/* Pagina de gracias. Aqui se dispara el evento Lead del pixel:
+   una URL propia es la senal mas limpia y no cuenta envios fallidos.
+
+   PENDIENTE con Salem: acordar el event_id compartido para deduplicar
+   contra el evento que mande la CAPI desde la automatizacion. */
+import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { copy } from '../data/copy';
+---
+
+<Base title={copy.thanks.title} noindex>
+  <Header />
+
+  <main class="thanks">
+    <div class="wrap thanks-inner">
+      <h1 class="t-h1 thanks-title">
+        <span class="bi-en">{copy.thanks.headline.en}</span>
+        <span class="bi-es">{copy.thanks.headline.es}</span>
+      </h1>
+
+      <p class="t-body-lg thanks-sub prose">
+        <span class="bi-en">{copy.thanks.sub.en}</span>
+        <span class="bi-es">{copy.thanks.sub.es}</span>
+      </p>
+
+      <a class="btn btn-secondary btn-md" href="/">{copy.thanks.back}</a>
+      <span class="btn-es">{copy.thanks.backEs}</span>
+    </div>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .thanks { padding-block: var(--s-24); }
+  .thanks-inner { max-width: var(--measure); }
+  .thanks-title { margin-bottom: var(--s-6); }
+  .thanks-sub { color: var(--c-slate); margin-bottom: var(--s-8); }
+</style>
+
+<script>
+  const source = new URLSearchParams(window.location.search).get('source') ?? 'unknown';
+
+  function fire() {
+    const fbq = (window as any).fbq;
+    if (typeof fbq !== 'function') return false;
+    // Un solo evento estandar Lead, con el origen como parametro.
+    // Tres eventos distintos optimizarian peor.
+    fbq('track', 'Lead', { source });
+    return true;
+  }
+
+  if (!fire()) {
+    // El pixel puede llegar despues del consentimiento de cookies
+    window.addEventListener('jk:consent', () => window.setTimeout(fire, 300));
+  }
+</script>

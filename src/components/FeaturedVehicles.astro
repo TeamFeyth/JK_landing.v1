@@ -1,0 +1,140 @@
+---
+/* Slider de destacados. El cliente pidio slider; la guia pide rejilla 3/2/1.
+   Se resuelve con un carril de desplazamiento que muestra 3 en desktop,
+   2 en tablet y 1 en movil, asi se cumplen las dos cosas. */
+import { vehicles } from '../data/vehicles';
+import { copy } from '../data/copy';
+import { site } from '../data/site';
+import VehicleCard from './VehicleCard.astro';
+import Icon from './Icon.astro';
+---
+
+<section class="section" id="inventory">
+  <div class="wrap">
+    <div class="vsec-head">
+      <div>
+        <h2 class="t-h1">
+          <span class="bi-en">{copy.vehicles.headline.en}</span>
+          <span class="bi-es">{copy.vehicles.headline.es}</span>
+        </h2>
+        <p class="t-body vsec-sub">
+          <span class="bi-en">{copy.vehicles.sub.en}</span>
+          <span class="bi-es">{copy.vehicles.sub.es}</span>
+        </p>
+      </div>
+
+      <div class="vsec-controls">
+        <button class="vsec-arrow" type="button" data-slider-prev aria-label={copy.vehicles.prev.en}>
+          <Icon name="arrow-left" size={20} />
+        </button>
+        <button class="vsec-arrow" type="button" data-slider-next aria-label={copy.vehicles.next.en}>
+          <Icon name="arrow-right" size={20} />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="vsec-track-outer">
+    <ul class="vsec-track" data-slider-track tabindex="0" aria-label="Featured vehicles">
+      {vehicles.map((v) => (<li class="vsec-slide"><VehicleCard v={v} /></li>))}
+    </ul>
+  </div>
+
+  <div class="wrap vsec-foot">
+    <a class="btn btn-secondary btn-md" href={site.legal.inventoryUrl} rel="noopener">
+      {copy.vehicles.viewAll}
+    </a>
+    <span class="btn-es">{copy.vehicles.viewAllEs}</span>
+  </div>
+</section>
+
+<style>
+  .vsec-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--s-6);
+    margin-bottom: var(--s-8);
+  }
+  .vsec-sub { color: var(--c-slate); margin-top: var(--s-4); }
+
+  .vsec-controls { display: none; gap: var(--s-4); flex-shrink: 0; }
+  .vsec-arrow {
+    width: 48px; height: 48px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent;
+    border: 2px solid var(--c-ink);
+    border-radius: var(--radius);
+    color: var(--c-ink);
+    cursor: pointer;
+    transition: background-color 150ms ease-out, color 150ms ease-out;
+  }
+  .vsec-arrow:hover { background: var(--c-ink); color: var(--c-white); }
+  .vsec-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+  .vsec-arrow:disabled:hover { background: transparent; color: var(--c-ink); }
+
+  .vsec-track-outer { overflow: hidden; }
+  .vsec-track {
+    display: flex;
+    gap: var(--gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-inline: var(--page-x);
+    padding-bottom: var(--s-4);
+    max-width: var(--max-w);
+    margin-inline: auto;
+    scrollbar-width: thin;
+  }
+  .vsec-slide {
+    flex: 0 0 calc(100% - var(--page-x));
+    scroll-snap-align: start;
+  }
+
+  .vsec-foot { margin-top: var(--s-8); }
+
+  @media (min-width: 700px) {
+    .vsec-slide { flex-basis: calc((100% - var(--gutter)) / 2); }
+  }
+  @media (min-width: 1000px) {
+    .vsec-controls { display: flex; }
+    .vsec-slide { flex-basis: calc((100% - var(--gutter) * 2) / 3); }
+  }
+</style>
+
+<script>
+  const track = document.querySelector<HTMLElement>('[data-slider-track]');
+  const prev = document.querySelector<HTMLButtonElement>('[data-slider-prev]');
+  const next = document.querySelector<HTMLButtonElement>('[data-slider-next]');
+
+  if (track && prev && next) {
+    const step = () => {
+      const slide = track.querySelector<HTMLElement>('.vsec-slide');
+      return slide ? slide.offsetWidth + 32 : track.clientWidth;
+    };
+
+    prev.addEventListener('click', () => track.scrollBy({ left: -step() }));
+    next.addEventListener('click', () => track.scrollBy({ left: step() }));
+
+    const sync = () => {
+      prev.disabled = track.scrollLeft <= 4;
+      next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
+    };
+    track.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  }
+
+  // "Finance me" lleva al formulario de abajo con el stock ya cargado
+  document.querySelectorAll<HTMLButtonElement>('[data-finance-me]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const stock = btn.dataset.stock ?? '';
+      const form = document.querySelector<HTMLFormElement>('form[data-source="bottom"]');
+      if (!form) return;
+      const hidden = form.querySelector<HTMLInputElement>('[data-stock]');
+      if (hidden) hidden.value = stock;
+      form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window.setTimeout(() => form.querySelector<HTMLInputElement>('input[name="name"]')?.focus(), 500);
+    });
+  });
+</script>

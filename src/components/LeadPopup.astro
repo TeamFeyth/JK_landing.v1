@@ -1,0 +1,107 @@
+---
+/* Popup del formulario. Solo movil, se dispara al 50% de la pagina,
+   una sola vez por sesion. Cierra con la X, con clic fuera y con Escape. */
+import { copy } from '../data/copy';
+import LeadForm from './LeadForm.astro';
+import Icon from './Icon.astro';
+---
+
+<div class="popup" data-popup hidden>
+  <div class="popup-backdrop" data-popup-close></div>
+
+  <div class="popup-panel" role="dialog" aria-modal="true" aria-labelledby="popup-title">
+    <button class="popup-close" type="button" data-popup-close aria-label="Close">
+      <Icon name="close" size={20} />
+    </button>
+
+    <LeadForm
+      source="popup"
+      headline={copy.form.popupHeadline}
+      sub={copy.form.popupSub}
+      headingTag="h2"
+      variant="bare"
+    />
+  </div>
+</div>
+
+<style>
+  .popup {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: flex-end;
+  }
+  .popup[hidden] { display: none; }
+
+  .popup-backdrop { position: absolute; inset: 0; background: rgba(17, 20, 24, 0.6); }
+
+  .popup-panel {
+    position: relative;
+    width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+    background: var(--c-white);
+    border-radius: var(--radius);
+    padding: var(--s-8) var(--s-6) var(--s-6);
+  }
+  .popup-close {
+    position: absolute;
+    top: var(--s-3);
+    right: var(--s-3);
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--c-ink);
+    cursor: pointer;
+  }
+
+  /* Solo movil. Por encima de 768px no existe */
+  @media (min-width: 768px) {
+    .popup { display: none !important; }
+  }
+</style>
+
+<script>
+  const KEY = 'jk_popup_seen';
+  const popup = document.querySelector<HTMLElement>('[data-popup]');
+
+  function seen(): boolean {
+    try { return sessionStorage.getItem(KEY) === '1'; } catch { return false; }
+  }
+  function markSeen() {
+    try { sessionStorage.setItem(KEY, '1'); } catch { /* modo privado */ }
+  }
+
+  if (popup && window.matchMedia('(max-width: 767px)').matches && !seen()) {
+    let opened = false;
+
+    const open = () => {
+      if (opened) return;
+      opened = true;
+      markSeen();
+      popup.hidden = false;
+      document.body.style.overflow = 'hidden';
+      popup.querySelector<HTMLInputElement>('input[name="name"]')?.focus();
+      window.removeEventListener('scroll', onScroll);
+    };
+
+    const close = () => {
+      popup.hidden = true;
+      document.body.style.overflow = '';
+    };
+
+    const onScroll = () => {
+      const scrolled = window.scrollY + window.innerHeight;
+      if (scrolled >= document.documentElement.scrollHeight * 0.5) open();
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    popup.querySelectorAll('[data-popup-close]').forEach((el) => el.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !popup.hidden) close(); });
+  }
+</script>

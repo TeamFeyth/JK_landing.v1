@@ -1,0 +1,18 @@
+---
+/* Par bilingue. Ingles arriba, espanol debajo en italica un paso menor.
+   La guia prohibe separarlos en pantallas distintas, por eso no hay
+   selector de idioma: siempre se ven los dos. */
+interface Props {
+  en: string;
+  es: string;
+  tag?: string;
+  class?: string;
+}
+const { en, es, tag = 'p', class: className = '' } = Astro.props;
+const Tag = tag as any;
+---
+
+<Tag class={className}>
+  <span class="bi-en" lang="en">{en}</span>
+  <span class="bi-es" lang="es">{es}</span>
+</Tag>

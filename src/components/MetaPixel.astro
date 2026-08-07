@@ -1,0 +1,41 @@
+---
+/* Pixel de Meta.
+   PENDIENTE de Salem: falta el Dataset / Pixel ID. Mientras no exista la
+   variable de entorno, no se inyecta nada.
+
+   Si PUBLIC_REQUIRE_COOKIE_CONSENT es "true", el pixel espera al evento
+   jk:consent que dispara el banner de cookies.
+
+   El evento Lead se dispara en /thank-you, no aqui: una URL de gracias es
+   la senal mas limpia y evita contar envios fallidos. */
+const pixelId = import.meta.env.PUBLIC_META_PIXEL_ID ?? '';
+const requireConsent = (import.meta.env.PUBLIC_REQUIRE_COOKIE_CONSENT ?? 'true') === 'true';
+---
+
+{
+  pixelId && (
+    <script is:inline define:vars={{ pixelId, requireConsent }}>
+      (function () {
+        function loadPixel() {
+          if (window.fbq) return;
+          !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+          n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+          (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+          window.fbq('init', pixelId);
+          window.fbq('track', 'PageView');
+        }
+
+        if (!requireConsent) { loadPixel(); return; }
+
+        var stored = null;
+        try { stored = localStorage.getItem('jk_cookie_consent'); } catch (e) {}
+        if (stored === 'granted') loadPixel();
+        else window.addEventListener('jk:consent', function (e) {
+          if (e.detail === 'granted') loadPixel();
+        });
+      })();
+    </script>
+  )
+}

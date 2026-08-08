@@ -18,7 +18,12 @@ import Icon from './Icon.astro';
 ---
 
 <section class="hero" id="top">
-  <div class="hero-bg" aria-hidden="true"></div>
+  <div
+    class="hero-bg"
+    aria-hidden="true"
+    style={`--heroImg:url("${site.heroImage}");--heroImgSm:url("${site.heroImageSmall}")`}
+  >
+  </div>
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <h1 class="t-hero hero-headline">
@@ -37,8 +42,12 @@ import Icon from './Icon.astro';
             <li>
               <Icon name="shield" size={20} class="hero-bullet-icon" />
               <span>
-                <span class="bi-en" lang="en">{b.en}</span>
-                <span class="bi-es" lang="es">{b.es}</span>
+                <span class="bi-en" lang="en">
+                  {b.en}
+                </span>
+                <span class="bi-es" lang="es">
+                  {b.es}
+                </span>
               </span>
             </li>
           ))
@@ -57,7 +66,7 @@ import Icon from './Icon.astro';
   </div>
 </section>
 
-<style define:vars={{ heroImg: `url("${site.heroImage}")`, heroImgSm: `url("${site.heroImageSmall}")` }}>
+<style>
   .hero-bg {
     position: absolute;
     inset: 0;
@@ -74,10 +83,14 @@ import Icon from './Icon.astro';
     background: rgba(17, 20, 24, 0.55);
   }
   @media (min-width: 768px) {
-    .hero-bg { background-image: var(--heroImg); }
+    .hero-bg {
+      background-image: var(--heroImg);
+    }
   }
   @media (prefers-reduced-motion: no-preference) {
-    .hero-bg { background-attachment: scroll; }
+    .hero-bg {
+      background-attachment: scroll;
+    }
   }
 
   .hero {
@@ -88,16 +101,37 @@ import Icon from './Icon.astro';
     color: var(--c-white);
     padding-block: var(--s-12);
   }
-  .hero-grid { display: grid; gap: var(--s-12); }
-  .hero-headline { margin-bottom: var(--s-6); }
-  .hero-sub { color: rgba(255, 255, 255, 0.85); margin-bottom: var(--s-8); }
+  .hero-grid {
+    display: grid;
+    gap: var(--s-12);
+  }
+  .hero-headline {
+    margin-bottom: var(--s-6);
+  }
+  .hero-sub {
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: var(--s-8);
+  }
 
-  .hero-bullets { display: grid; gap: var(--s-4); }
-  .hero-bullets li { display: flex; align-items: flex-start; gap: var(--s-3); }
-  .hero-bullet-icon { color: var(--c-red); flex-shrink: 0; margin-top: 2px; }
+  .hero-bullets {
+    display: grid;
+    gap: var(--s-4);
+  }
+  .hero-bullets li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--s-3);
+  }
+  .hero-bullet-icon {
+    color: var(--c-red);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
 
   @media (min-width: 900px) {
-    .hero { padding-block: var(--s-24); }
+    .hero {
+      padding-block: var(--s-24);
+    }
     .hero-grid {
       grid-template-columns: 1fr minmax(380px, 440px);
       gap: var(--gutter);

@@ -251,17 +251,19 @@ const HeadingTag = headingTag as any;
       delete payload.company;
 
       try {
-        if (!WEBHOOK) {
-          // Sin webhook configurado todavia. Se registra y se continua.
-          console.warn('PUBLIC_WEBHOOK_URL sin configurar. Payload:', payload);
-        } else {
-          const res = await fetch(WEBHOOK, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          if (!res.ok) throw new Error(String(res.status));
-        }
+        /* Sin webhook NO se puede continuar. Antes se registraba en consola y
+           se seguia a /thank-you: la persona veia la pantalla de gracias, el
+           lead se perdia y nadie la llamaba. Falla a la vista, con el mensaje
+           de error que ya existe y el telefono como salida. */
+        if (!WEBHOOK) throw new Error('PUBLIC_WEBHOOK_URL sin configurar');
+
+        const res = await fetch(WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+
         /* Marca de un solo uso. /thank-you la consume para no disparar el
            Lead dos veces si la persona recarga, ni al entrar por la URL. */
         try {

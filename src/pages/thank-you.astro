@@ -69,11 +69,14 @@ import { copy } from '../data/copy';
   }
 
   const lead = claim();
+  let fired = false;
 
   function fire(): boolean {
+    if (fired) return true;               // ya se disparo: no se repite
     if (!lead) return true;               // nada que disparar: se da por hecho
     const fbq = (window as any).fbq;
     if (typeof fbq !== 'function') return false;
+    fired = true;
     // Un solo evento estandar Lead, con el origen como parametro.
     // Tres eventos distintos optimizarian peor.
     // eventID es lo que permite deduplicar contra la CAPI.

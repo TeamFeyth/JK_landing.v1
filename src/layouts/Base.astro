@@ -18,7 +18,20 @@ interface Props {
   noindex?: boolean;
 }
 const { title, description = '', noindex = false } = Astro.props;
-const canonical = new URL(Astro.url.pathname, site.domain).href;
+
+/* El canonical va contra la URL de ESTE despliegue (Astro.site, que sale de
+   PUBLIC_SITE_URL), no contra el dominio del cliente. Antes apuntaba a
+   jkamalcars.com y le decia a Google que esta pagina era una copia de la
+   home del cliente. */
+const origin = Astro.site ?? new URL(site.domain);
+const canonical = new URL(Astro.url.pathname, origin).href;
+
+/* Mientras esto no sea "true", TODAS las paginas van en noindex. Evita que
+   el subdominio de pruebas se indexe con la marca, el telefono y la ficha
+   AutoDealer del cliente, compitiendo con su sitio real. Se enciende el dia
+   del lanzamiento, junto con robots.txt. */
+const allowIndexing = import.meta.env.PUBLIC_ALLOW_INDEXING === 'true';
+const blockIndex = noindex || !allowIndexing;
 
 /* Ficha del negocio para Google. Los datos salen de site.ts, o sea que
    cambiarlos en un solo lugar actualiza tambien esto. */
@@ -56,7 +69,7 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
-    {noindex && <meta name="robots" content="noindex" />}
+    {blockIndex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
 
     <meta property="og:type" content="website" />
@@ -73,7 +86,10 @@ const jsonLd = {
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-    {!noindex && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
+    {/* La ficha AutoDealer solo se publica cuando la pagina es indexable.
+       Dos fichas del mismo negocio en URLs distintas le ensucian a Google
+       el panel local del cliente. */}
+    {!blockIndex && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
 
     <MetaPixel />
 

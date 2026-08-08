@@ -139,10 +139,13 @@ export const copy = {
     privacy: { en: 'Privacy policy', es: 'Aviso de privacidad' },
     terms: { en: 'Terms of service', es: 'Términos del servicio' },
     closed: { en: 'Closed', es: 'Cerrado' },
-    /* PENDIENTE: el cliente debe entregar el disclaimer exacto de financiamiento. */
+    /* Feyth confirmo que no existe un disclaimer formal: los terminos se
+       hablan por telefono. Se deja una linea minima que solo dice eso, sin
+       inventar condiciones. La linea de consentimiento del formulario (que
+       si hace falta, porque van a llamar y mandar SMS) vive en copy.form. */
     disclaimer: {
-      en: 'Financing terms and approval are subject to review. Down payment, payment amount, and term vary by vehicle and applicant.',
-      es: 'Los términos de financiamiento y la aprobación están sujetos a revisión. El enganche, el pago y el plazo varían según el vehículo y el solicitante.',
+      en: 'Down payment shown is the advertised amount for that vehicle. Final terms are confirmed by phone.',
+      es: 'El enganche mostrado es el anunciado para ese vehículo. Los términos finales se confirman por teléfono.',
     },
   },
 

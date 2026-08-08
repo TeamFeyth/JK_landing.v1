@@ -1,5 +1,5 @@
 ---
-/* Popup del formulario. Solo movil, se dispara al 50% de la pagina,
+/* Popup del formulario. Solo movil, se dispara al 60% de la pagina,
    una sola vez por sesion. Cierra con la X, con clic fuera y con Escape. */
 import { copy } from '../data/copy';
 import LeadForm from './LeadForm.astro';
@@ -39,16 +39,22 @@ import Icon from './Icon.astro';
   .popup-panel {
     position: relative;
     width: 100%;
-    max-height: 92vh;
+    /* dvh descuenta la barra del navegador; vh queda de respaldo.
+       Se deja aire arriba para que el backdrop siga siendo tocable. */
+    max-height: 80vh;
+    max-height: 80dvh;
     overflow-y: auto;
+    overscroll-behavior: contain;
     background: var(--c-white);
     border-radius: var(--radius);
-    padding: var(--s-8) var(--s-6) var(--s-6);
+    padding: var(--s-2) var(--s-6) var(--s-6);
   }
+  /* La X viaja con el scroll interno del panel */
   .popup-close {
-    position: absolute;
-    top: var(--s-3);
-    right: var(--s-3);
+    position: sticky;
+    top: 0;
+    float: right;
+    z-index: 1;
     width: 44px;
     height: 44px;
     display: inline-flex;
@@ -86,7 +92,10 @@ import Icon from './Icon.astro';
       markSeen();
       popup.hidden = false;
       document.body.style.overflow = 'hidden';
-      popup.querySelector<HTMLInputElement>('input[name="name"]')?.focus();
+      /* Sin autofocus: en movil levanta el teclado, empuja el panel y deja
+         la X fuera de vista. El foco va al boton de cerrar, que ademas es
+         la salida obvia para lector de pantalla. */
+      popup.querySelector<HTMLButtonElement>('.popup-close')?.focus();
       window.removeEventListener('scroll', onScroll);
     };
 
@@ -97,7 +106,7 @@ import Icon from './Icon.astro';
 
     const onScroll = () => {
       const scrolled = window.scrollY + window.innerHeight;
-      if (scrolled >= document.documentElement.scrollHeight * 0.5) open();
+      if (scrolled >= document.documentElement.scrollHeight * 0.6) open();
     };
 
     window.addEventListener('scroll', onScroll, { passive: true });

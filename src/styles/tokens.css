@@ -7,16 +7,18 @@
   --c-red: #e63329;      /* CTA, precios, la marca, 10% */
 
   /* --- Apoyo ---
-     PENDIENTE: la guia nombra estos colores pero no dio el hex.
-     Confirmar con Feyth antes de produccion. Hairline si viene confirmado. */
+     La guia nombra estos colores pero nunca entrego el hex. Feyth confirmo
+     que no lo van a dar, asi que estos valores quedan como definitivos.
+     Se derivaron de Ink y Hairline, que si estan confirmados, y respetan
+     los contrastes AA sobre blanco. Cambiar aqui si algun dia llegan. */
   --c-navy: #16273d;     /* Lot Navy. Solo footer y bloques de financiamiento */
   --c-slate: #5b6572;    /* copy secundario */
   --c-hairline: #dcdfe4; /* bordes. CONFIRMADO en la guia */
   --c-concrete: #f3f4f6; /* paneles silenciosos, franjas de tabla */
 
   /* --- Funcionales. Solo confirmaciones, errores y badges. Nunca decorativos --- */
-  --c-approved: #1b7f3b; /* PENDIENTE de hex oficial */
-  --c-caution: #b25e00;  /* PENDIENTE de hex oficial */
+  --c-approved: #1b7f3b; /* definitivo, ver nota de arriba */
+  --c-caution: #b25e00;  /* definitivo, ver nota de arriba */
 
   /* --- Tipografia --- */
   --f-display: 'Archivo Black', 'Arial Black', Arial, sans-serif;

@@ -44,15 +44,15 @@ import Logo from './Logo.astro';
       <p class="t-eyebrow footer-heading">Legal</p>
       <ul class="footer-legal t-body">
         <li><a href={site.legal.privacyUrl} rel="noopener">{copy.footer.privacy.en} <i>/ {copy.footer.privacy.es}</i></a></li>
-        <li><a href={site.legal.privacyUrl} rel="noopener">{copy.footer.terms.en} <i>/ {copy.footer.terms.es}</i></a></li>
+        <li><a href={site.legal.termsUrl} rel="noopener">{copy.footer.terms.en} <i>/ {copy.footer.terms.es}</i></a></li>
       </ul>
     </div>
   </div>
 
   <div class="wrap footer-bottom">
     <p class="t-caption footer-disclaimer">
-      <span class="bi-en">{copy.footer.disclaimer.en}</span>
-      <span class="bi-es">{copy.footer.disclaimer.es}</span>
+      <span class="bi-en" lang="en">{copy.footer.disclaimer.en}</span>
+      <span class="bi-es" lang="es">{copy.footer.disclaimer.es}</span>
     </p>
     <p class="t-caption footer-copy">&copy; {new Date().getFullYear()} {site.name}</p>
   </div>

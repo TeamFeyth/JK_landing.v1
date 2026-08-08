@@ -40,8 +40,12 @@ Cambiar un campo se hace en un solo lugar.
 
 ## Qué manda el formulario
 
-Los 5 campos visibles más: `source` (hero/popup/bottom), `stock`,
+Los 5 campos visibles más: `source` (hero/popup/bottom), `stock`, `event_id`,
 `page_url`, `referrer`, `submitted_at`, `fbc`, `fbp` y los 5 `utm_*`.
+
+`event_id` es lo que permite deduplicar. El Pixel lo manda como `eventID` y la
+CAPI tiene que reenviar **el mismo valor** como `event_id`. Sin eso cada lead
+se cuenta dos veces.
 
 Todo va en un POST JSON a `PUBLIC_WEBHOOK_URL`. Ese webhook (Zapier/Make/n8n)
 reparte a Neo CRM y al Google Sheet.
@@ -53,20 +57,30 @@ Al enviar, redirige a `/thank-you/?source=...`, y ahí se dispara el evento
 
 | Pendiente | De quién | Dónde entra |
 |---|---|---|
-| Logo PNG/SVG | Cliente | `src/components/Logo.astro` |
-| Fotos de vehículos | Auto Action | `public/images/vehicles/` |
-| Specs, precios, enganche, plazo, APR | Auto Action | `src/data/vehicles.ts` |
-| Dataset/Pixel ID | Salem | `.env` |
+| **Enganche de 5 de los 6 autos** | Cliente / Feyth | `src/data/vehicles.ts` |
+| **Millaje del Passat** (56,825 vs "107k") | Cliente / Feyth | `src/data/vehicles.ts` |
 | Endpoint del webhook | Noor + automatización | `.env` |
+| Dataset/Pixel ID | Salem | `.env` |
 | Site key de reCAPTCHA | Cliente | `.env` |
 | Hex de Lot Navy, Slate, Concrete, Approved, Caution | Feyth | `src/styles/tokens.css` |
 | Disclaimer de financiamiento | Cliente | `src/data/copy.ts` |
-| Foto de fondo del hero | Cliente | `src/components/Hero.astro` |
+| Foto de fondo del hero + imagen og | Cliente | `Hero.astro` · `site.ts` |
+
+Los datos y las fotos de los 6 vehículos ya están cargados, leídos del DMS del
+cliente el 07/08/2026. **No hay conexión al DMS**: son estáticos, por orden de
+Feyth.
+
+Las fotos se sirven desde el CDN del DMS. Antes de encender pauta conviene
+bajarlas a `public/images/vehicles/`: si el DMS activa protección de hotlinking
+o el auto se vende, la tarjeta se queda sin imagen.
 
 ## Conflictos sin resolver en los documentos
 
-1. **Teléfono.** La guía de marca dice `832.680.5892`, el copy dice
-   `(832) 447-1511`. Se usa el segundo. Confirmar.
+1. **Teléfono. RESUELTO** — los dos números existen y son distintos.
+   `(832) 447-1511` es el oficial del negocio (encabezado y pie del sitio del
+   cliente) y es el que usa la landing. `832-680-5892` es la línea de ventas
+   por llamada y texto, y aparece dentro de la descripción de cada vehículo.
+   Falta que Feyth decida a cuál deben entrar los leads de la pauta.
 2. **Switch EN/ES.** La guía pide un selector de idioma en el nav, pero la
    decisión del proyecto es mostrar los dos idiomas siempre. No se incluyó
    el switch porque se contradicen.

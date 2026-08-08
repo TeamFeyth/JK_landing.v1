@@ -19,8 +19,8 @@ const HeadingTag = headingTag as any;
 
 <div class:list={['lead-form', variant === 'panel' && 'lead-form-panel']}>
   <HeadingTag class="t-h2 lead-form-title">
-    <span class="bi-en">{headline.en}</span>
-    <span class="bi-es">{headline.es}</span>
+    <span class="bi-en" lang="en">{headline.en}</span>
+    <span class="bi-es" lang="es">{headline.es}</span>
   </HeadingTag>
   <Bilingual en={sub.en} es={sub.es} class="t-caption lead-form-sub" />
 
@@ -131,6 +131,7 @@ const HeadingTag = headingTag as any;
     <input type="hidden" name="utm_content" value="" />
     <input type="hidden" name="utm_term" value="" />
     <!-- PENDIENTE reCAPTCHA v3: aqui entra el token cuando llegue la site key -->
+    <input type="hidden" name="event_id" value="" />
     <input type="hidden" name="recaptcha_token" value="" data-recaptcha />
 
     <button class="btn btn-primary btn-lg btn-block" type="submit" data-submit>
@@ -143,8 +144,8 @@ const HeadingTag = headingTag as any;
     </p>
 
     <p class="t-caption consent">
-      <span class="bi-en">{f.consent.en}</span>
-      <span class="bi-es">{f.consent.es}</span>
+      <span class="bi-en" lang="en">{f.consent.en}</span>
+      <span class="bi-es" lang="es">{f.consent.es}</span>
     </p>
   </form>
 </div>
@@ -152,6 +153,9 @@ const HeadingTag = headingTag as any;
 <style>
   .lead-form-panel {
     background: var(--c-white);
+    /* El hero es Ink y declara color blanco. Sin esto, el titulo del
+       formulario hereda blanco y queda invisible sobre el panel blanco. */
+    color: var(--c-ink);
     border: 1px solid var(--c-hairline);
     border-radius: var(--radius);
     padding: var(--s-6);
@@ -165,7 +169,7 @@ const HeadingTag = headingTag as any;
 
 <script>
   import { formatPhone, isValidUsPhone, isValidEmail, isValidName } from '../lib/validation';
-  import { collectContext } from '../lib/tracking';
+  import { collectContext, newEventId } from '../lib/tracking';
 
   const WEBHOOK = import.meta.env.PUBLIC_WEBHOOK_URL ?? '';
   const SENDING = 'Sending…';
@@ -232,7 +236,8 @@ const HeadingTag = headingTag as any;
 
       // Contexto de atribucion
       const stock = form.querySelector<HTMLInputElement>('[data-stock]')?.value ?? '';
-      const ctx = collectContext(source, stock);
+      const eventId = newEventId();
+      const ctx = collectContext(source, stock, eventId);
       for (const [key, value] of Object.entries(ctx)) {
         const hidden = form.querySelector<HTMLInputElement>(`input[type="hidden"][name="${key}"]`);
         if (hidden) hidden.value = String(value);
@@ -257,7 +262,14 @@ const HeadingTag = headingTag as any;
           });
           if (!res.ok) throw new Error(String(res.status));
         }
-        window.location.href = `/thank-you/?source=${encodeURIComponent(source)}`;
+        /* Marca de un solo uso. /thank-you la consume para no disparar el
+           Lead dos veces si la persona recarga, ni al entrar por la URL. */
+        try {
+          sessionStorage.setItem('jk_lead_pending', JSON.stringify({ source, eventId }));
+        } catch { /* modo privado: el evento simplemente no se dispara */ }
+
+        window.location.href =
+          `/thank-you/?source=${encodeURIComponent(source)}&eid=${encodeURIComponent(eventId)}`;
       } catch (err) {
         console.error('Fallo el envio del lead', err);
         form.setAttribute('data-state', 'error');

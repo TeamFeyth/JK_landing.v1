@@ -6,25 +6,29 @@
    El copy del cliente listaba ademas un CTA "Get Pre-Approved" arriba del
    formulario, pero serian dos primarios en la misma vista y la guia lo prohibe.
 
-   PENDIENTE: foto real del lote de fondo (16:9, luz natural). Mientras tanto
-   queda el panel Ink solido. Cuando llegue la foto se agrega la imagen y el
-   velo negro al 55% que pide la guia. */
+   Fondo: foto real del lote con el velo negro al 55% que pide la guia.
+   La imagen se define en site.ts. Si la foto no carga (el CDN del DMS podria
+   activar proteccion de hotlinking, o venderse el auto), abajo queda el panel
+   Ink solido y la seccion se ve igual de bien: la imagen es decorativa, nunca
+   carga texto. */
 import { copy } from '../data/copy';
+import { site } from '../data/site';
 import LeadForm from './LeadForm.astro';
 import Icon from './Icon.astro';
 ---
 
 <section class="hero" id="top">
+  <div class="hero-bg" aria-hidden="true"></div>
   <div class="wrap hero-grid">
     <div class="hero-copy">
       <h1 class="t-hero hero-headline">
-        <span class="bi-en">{copy.hero.headline.en}</span>
-        <span class="bi-es">{copy.hero.headline.es}</span>
+        <span class="bi-en" lang="en">{copy.hero.headline.en}</span>
+        <span class="bi-es" lang="es">{copy.hero.headline.es}</span>
       </h1>
 
       <p class="t-body-lg hero-sub prose">
-        <span class="bi-en">{copy.hero.sub.en}</span>
-        <span class="bi-es">{copy.hero.sub.es}</span>
+        <span class="bi-en" lang="en">{copy.hero.sub.en}</span>
+        <span class="bi-es" lang="es">{copy.hero.sub.es}</span>
       </p>
 
       <ul class="hero-bullets">
@@ -33,8 +37,8 @@ import Icon from './Icon.astro';
             <li>
               <Icon name="shield" size={20} class="hero-bullet-icon" />
               <span>
-                <span class="bi-en">{b.en}</span>
-                <span class="bi-es">{b.es}</span>
+                <span class="bi-en" lang="en">{b.en}</span>
+                <span class="bi-es" lang="es">{b.es}</span>
               </span>
             </li>
           ))
@@ -53,8 +57,33 @@ import Icon from './Icon.astro';
   </div>
 </section>
 
-<style>
+<style define:vars={{ heroImg: `url("${site.heroImage}")`, heroImgSm: `url("${site.heroImageSmall}")` }}>
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--heroImgSm);
+    background-size: cover;
+    background-position: center;
+  }
+  /* Velo al 55% sobre la foto. Sin esto el texto blanco no alcanza contraste */
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(17, 20, 24, 0.55);
+  }
+  @media (min-width: 768px) {
+    .hero-bg { background-image: var(--heroImg); }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-bg { background-attachment: scroll; }
+  }
+
   .hero {
+    position: relative;
+    isolation: isolate;
+    /* Respaldo solido: si la foto no llega, esto es lo que se ve */
     background: var(--c-ink);
     color: var(--c-white);
     padding-block: var(--s-12);

@@ -2,8 +2,9 @@
 /* Pagina de gracias. Aqui se dispara el evento Lead del pixel:
    una URL propia es la senal mas limpia y no cuenta envios fallidos.
 
-   PENDIENTE con Salem: acordar el event_id compartido para deduplicar
-   contra el evento que mande la CAPI desde la automatizacion. */
+   El event_id lo genera el formulario, viaja al webhook y llega aqui por
+   query string. Salem debe reenviar EL MISMO valor como event_id desde la
+   CAPI para que Meta cuente un solo Lead. */
 import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -16,13 +17,13 @@ import { copy } from '../data/copy';
   <main class="thanks">
     <div class="wrap thanks-inner">
       <h1 class="t-h1 thanks-title">
-        <span class="bi-en">{copy.thanks.headline.en}</span>
-        <span class="bi-es">{copy.thanks.headline.es}</span>
+        <span class="bi-en" lang="en">{copy.thanks.headline.en}</span>
+        <span class="bi-es" lang="es">{copy.thanks.headline.es}</span>
       </h1>
 
       <p class="t-body-lg thanks-sub prose">
-        <span class="bi-en">{copy.thanks.sub.en}</span>
-        <span class="bi-es">{copy.thanks.sub.es}</span>
+        <span class="bi-en" lang="en">{copy.thanks.sub.en}</span>
+        <span class="bi-es" lang="es">{copy.thanks.sub.es}</span>
       </p>
 
       <a class="btn btn-secondary btn-md" href="/">{copy.thanks.back}</a>
@@ -41,19 +42,52 @@ import { copy } from '../data/copy';
 </style>
 
 <script>
-  const source = new URLSearchParams(window.location.search).get('source') ?? 'unknown';
+  /* La marca la deja el formulario justo antes de redirigir. Es de un solo
+     uso: se lee y se borra. Asi una recarga o una visita directa a esta URL
+     no inventan un Lead. */
+  const PENDING = 'jk_lead_pending';
 
-  function fire() {
+  function claim(): { source: string; eventId: string } | null {
+    let raw: string | null = null;
+    try {
+      raw = sessionStorage.getItem(PENDING);
+      sessionStorage.removeItem(PENDING);
+    } catch {
+      return null;
+    }
+    if (!raw) return null;
+    try {
+      const v = JSON.parse(raw);
+      const params = new URLSearchParams(window.location.search);
+      return {
+        source: v.source ?? params.get('source') ?? 'unknown',
+        eventId: v.eventId ?? params.get('eid') ?? '',
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  const lead = claim();
+
+  function fire(): boolean {
+    if (!lead) return true;               // nada que disparar: se da por hecho
     const fbq = (window as any).fbq;
     if (typeof fbq !== 'function') return false;
     // Un solo evento estandar Lead, con el origen como parametro.
     // Tres eventos distintos optimizarian peor.
-    fbq('track', 'Lead', { source });
+    // eventID es lo que permite deduplicar contra la CAPI.
+    fbq('track', 'Lead', { source: lead.source }, { eventID: lead.eventId });
     return true;
   }
 
   if (!fire()) {
-    // El pixel puede llegar despues del consentimiento de cookies
-    window.addEventListener('jk:consent', () => window.setTimeout(fire, 300));
+    /* El pixel puede llegar despues del consentimiento de cookies.
+       Se reintenta en vez de apostar a un retardo fijo. */
+    let tries = 0;
+    const timer = window.setInterval(() => {
+      if (fire() || ++tries >= 20) window.clearInterval(timer);
+    }, 250);
+    window.addEventListener('jk:consent', () => fire());
   }
 </script>

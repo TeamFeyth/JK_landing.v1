@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?adf version="1.0"?>
+<adf>
+  <prospect status="new">
+    <id sequence="1" source="jkamalcars.com">c1d2e3f4-a5b6-47c8-9d01-2e3f4a5b6c7d</id>
+    <requestdate>2026-08-11T09:15:00-05:00</requestdate>
+    <vehicle interest="buy" status="used">
+      <year>2016</year>
+      <make>Cadillac</make>
+      <model>SRX</model>
+      <stock>9498431</stock>
+    </vehicle>
+    <customer>
+      <contact primarycontact="1">
+        <name part="first">Jose</name>
+        <name part="last">Ramirez</name>
+        <email>jose@example.com</email>
+        <phone type="voice" time="day" preferredcontact="1">8325550199</phone>
+      </contact>
+      <comments>Open auto loan on another vehicle: No
+Employed in the last 6 months: Yes
+Form: popup
+Landing: lp1
+Event ID: c1d2e3f4-a5b6-47c8-9d01-2e3f4a5b6c7d
+fbc: fb.1.1754593451000.abc123
+fbclid: abc123
+Page: https://jkamalcars.com/?fbclid=abc123</comments>
+    </customer>
+    <vendor>
+      <id sequence="1" source="jkamalcars.com">104878</id>
+      <vendorname>John Kamal Cars</vendorname>
+      <contact>
+        <name part="full">John Kamal Cars</name>
+        <phone type="voice">8324471511</phone>
+        <address>
+          <street line="1">13141 Bissonnet St #C</street>
+          <city>Houston</city>
+          <regioncode>TX</regioncode>
+          <postalcode>77099</postalcode>
+          <country>US</country>
+        </address>
+      </contact>
+    </vendor>
+    <provider>
+      <name part="full">Feyth Marketing</name>
+      <service>Landing Page 1</service>
+    </provider>
+  </prospect>
+</adf>

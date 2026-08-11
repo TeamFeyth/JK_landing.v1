@@ -9,6 +9,7 @@ import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/components.css';
 
+import Captcha from '../components/Captcha.astro';
 import MetaPixel from '../components/MetaPixel.astro';
 import { site } from '../data/site';
 
@@ -86,18 +87,19 @@ const jsonLd = {
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 
-    {/* La ficha AutoDealer solo se publica cuando la pagina es indexable.
+    {
+      /* La ficha AutoDealer solo se publica cuando la pagina es indexable.
        Dos fichas del mismo negocio en URLs distintas le ensucian a Google
-       el panel local del cliente. */}
-    {!blockIndex && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
+       el panel local del cliente. */
+    }
+    {
+      !blockIndex && (
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+      )
+    }
 
     <MetaPixel />
-
-    <!-- Guarda fbclid y UTMs al llegar, antes de que el visitante navegue -->
-    <script>
-      import { captureAttribution } from '../lib/tracking';
-      captureAttribution();
-    </script>
+    <Captcha />
   </head>
 
   <body>

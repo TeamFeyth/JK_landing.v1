@@ -1,15 +1,17 @@
 ---
 /* Pixel de Meta.
-   PENDIENTE de Salem: falta el Dataset / Pixel ID. Mientras no exista la
-   variable de entorno, no se inyecta nada.
+   Por defecto usa el pixel de prueba que entrego Feyth. Para cambiarlo se
+   pone PUBLIC_META_PIXEL_ID en Cloudflare; no hay que tocar este archivo.
 
    Si PUBLIC_REQUIRE_COOKIE_CONSENT es "true", el pixel espera al evento
    jk:consent que dispara el banner de cookies.
 
-   El evento Lead se dispara en /thank-you, no aqui: una URL de gracias es
-   la senal mas limpia y evita contar envios fallidos. */
-const pixelId = import.meta.env.PUBLIC_META_PIXEL_ID ?? '';
-const requireConsent = (import.meta.env.PUBLIC_REQUIRE_COOKIE_CONSENT ?? 'true') === 'true';
+   El evento Lead se dispara en /thank-you con el eventID que viaja en la URL,
+   para que la CAPI pueda deduplicar contra el mismo identificador. */
+import { META_PIXEL_ID, REQUIRE_COOKIE_CONSENT } from '../lib/config';
+
+const pixelId = META_PIXEL_ID;
+const requireConsent = REQUIRE_COOKIE_CONSENT;
 ---
 
 {

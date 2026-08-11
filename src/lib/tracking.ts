@@ -1,11 +1,9 @@
 /* Recoleccion de datos de atribucion en el navegador.
    Todo esto viaja en campos ocultos del formulario hacia el webhook,
    y de ahi a Neo CRM. La CAPI los necesita despues para atribuir la
-   conversion al anuncio correcto.
+   conversion al anuncio correcto. */
 
-   Se captura al CARGAR la pagina, no al enviar el formulario. Si el
-   visitante navega y se pierde el query string, o si el banner de cookies
-   retrasa el pixel, la atribucion se perderia. */
+import { LANDING_ID } from './config';
 
 export const UTM_KEYS = [
   'utm_source',
@@ -19,7 +17,7 @@ const STORE_KEY = 'jk_attr';
 
 interface Attribution {
   fbclid: string;
-  clickedAt: number;  // momento real de la llegada, no del envio
+  clickedAt: number; // momento real de la llegada, no del envio
   utms: Record<string, string>;
 }
 
@@ -46,8 +44,8 @@ export function captureAttribution(): void {
     if (v) hasUtm = true;
   }
 
-  if (!fbclid && !hasUtm) return;      // nada que guardar
-  if (readStore()) return;             // ya hay una primera llegada
+  if (!fbclid && !hasUtm) return; // nada que guardar
+  if (readStore()) return; // ya hay una primera llegada
 
   try {
     sessionStorage.setItem(
@@ -85,7 +83,15 @@ export function getFbp(): string {
   return getCookie('_fbp');
 }
 
-/* UTMs de la URL actual; si ya no estan, los de la primera llegada. */
+/* Identificador unico del envio. El pixel lo manda como eventID y la funcion
+   lo pone en el ADF, para que la CAPI pueda deduplicar despues. */
+export function newEventId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `jk-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 export function getUtms(): Record<string, string> {
   const params = new URLSearchParams(window.location.search);
   const stored = readStore();
@@ -108,14 +114,17 @@ export function newEventId(): string {
 /* Todo lo que acompana al lead ademas de los 5 campos visibles. */
 export function collectContext(source: string, stock: string, eventId: string) {
   return {
+    landing: LANDING_ID,
     source,
     stock,
-    event_id: eventId,
+    event_id: newEventId(),
     page_url: window.location.href,
+    landing_url: window.location.href,
     referrer: document.referrer,
     submitted_at: new Date().toISOString(),
     fbc: getFbc(),
     fbp: getFbp(),
+    fbclid: new URLSearchParams(window.location.search).get('fbclid') ?? '',
     ...getUtms(),
   };
 }

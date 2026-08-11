@@ -3,6 +3,9 @@
    hero, popup y bottom. Cada instancia manda su propio `source`. */
 import { copy } from '../data/copy';
 import Bilingual from './Bilingual.astro';
+import { CAPTCHA_PROVIDER, TURNSTILE_SITE_KEY } from '../lib/config';
+
+const showTurnstile = CAPTCHA_PROVIDER === 'turnstile' && Boolean(TURNSTILE_SITE_KEY);
 
 interface Props {
   source: 'hero' | 'popup' | 'bottom';
@@ -26,7 +29,14 @@ const HeadingTag = headingTag as any;
 
   <form data-lead-form data-source={source} novalidate>
     <!-- Trampa de spam. Si viene llena, el envio se descarta en silencio -->
-    <input class="hp" type="text" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <input
+      class="hp"
+      type="text"
+      name="company"
+      tabindex="-1"
+      autocomplete="off"
+      aria-hidden="true"
+    />
 
     <div class="field" data-field="name">
       <input
@@ -39,11 +49,13 @@ const HeadingTag = headingTag as any;
         required
       />
       <label class="field-label" for={id('name')}>
-        {f.fields.name.en} <span class="req">*</span>
+        {f.fields.name.en}
+        <span class="req">*</span>
         <span class="lbl-es"> / {f.fields.name.es}</span>
       </label>
       <p class="field-error" data-error>
-        {f.errors.name.en} <em>{f.errors.name.es}</em>
+        {f.errors.name.en}
+        <em>{f.errors.name.es}</em>
       </p>
     </div>
 
@@ -60,11 +72,13 @@ const HeadingTag = headingTag as any;
         required
       />
       <label class="field-label" for={id('phone')}>
-        {f.fields.phone.en} <span class="req">*</span>
+        {f.fields.phone.en}
+        <span class="req">*</span>
         <span class="lbl-es"> / {f.fields.phone.es}</span>
       </label>
       <p class="field-error" data-error>
-        {f.errors.phone.en} <em>{f.errors.phone.es}</em>
+        {f.errors.phone.en}
+        <em>{f.errors.phone.es}</em>
       </p>
     </div>
 
@@ -79,41 +93,51 @@ const HeadingTag = headingTag as any;
         required
       />
       <label class="field-label" for={id('email')}>
-        {f.fields.email.en} <span class="req">*</span>
+        {f.fields.email.en}
+        <span class="req">*</span>
         <span class="lbl-es"> / {f.fields.email.es}</span>
       </label>
       <p class="field-error" data-error>
-        {f.errors.email.en} <em>{f.errors.email.es}</em>
+        {f.errors.email.en}
+        <em>{f.errors.email.es}</em>
       </p>
     </div>
 
     <div class="field" data-field="open_loan">
       <label class="field-label-static" for={id('open_loan')}>
-        {f.fields.openLoan.en} <span class="req">*</span>
+        {f.fields.openLoan.en}
+        <span class="req">*</span>
         <span class="lbl-es">{f.fields.openLoan.es}</span>
       </label>
       <select class="field-select" id={id('open_loan')} name="open_loan" data-empty="true" required>
-        <option value="" selected disabled hidden>{f.fields.selectOne.en} / {f.fields.selectOne.es}</option>
+        <option value="" selected disabled hidden
+          >{f.fields.selectOne.en} / {f.fields.selectOne.es}</option
+        >
         <option value="Yes">{f.fields.yes.en} / {f.fields.yes.es}</option>
         <option value="No">{f.fields.no.en} / {f.fields.no.es}</option>
       </select>
       <p class="field-error" data-error>
-        {f.errors.select.en} <em>{f.errors.select.es}</em>
+        {f.errors.select.en}
+        <em>{f.errors.select.es}</em>
       </p>
     </div>
 
     <div class="field" data-field="employed">
       <label class="field-label-static" for={id('employed')}>
-        {f.fields.employed.en} <span class="req">*</span>
+        {f.fields.employed.en}
+        <span class="req">*</span>
         <span class="lbl-es">{f.fields.employed.es}</span>
       </label>
       <select class="field-select" id={id('employed')} name="employed" data-empty="true" required>
-        <option value="" selected disabled hidden>{f.fields.selectOne.en} / {f.fields.selectOne.es}</option>
+        <option value="" selected disabled hidden
+          >{f.fields.selectOne.en} / {f.fields.selectOne.es}</option
+        >
         <option value="Yes">{f.fields.yes.en} / {f.fields.yes.es}</option>
         <option value="No">{f.fields.no.en} / {f.fields.no.es}</option>
       </select>
       <p class="field-error" data-error>
-        {f.errors.select.en} <em>{f.errors.select.es}</em>
+        {f.errors.select.en}
+        <em>{f.errors.select.es}</em>
       </p>
     </div>
 
@@ -130,9 +154,24 @@ const HeadingTag = headingTag as any;
     <input type="hidden" name="utm_campaign" value="" />
     <input type="hidden" name="utm_content" value="" />
     <input type="hidden" name="utm_term" value="" />
-    <!-- PENDIENTE reCAPTCHA v3: aqui entra el token cuando llegue la site key -->
+    <input type="hidden" name="landing" value="" />
     <input type="hidden" name="event_id" value="" />
-    <input type="hidden" name="recaptcha_token" value="" data-recaptcha />
+    <input type="hidden" name="landing_url" value="" />
+    <input type="hidden" name="fbclid" value="" />
+
+    {
+      showTurnstile && (
+        <div
+          class="cf-turnstile captcha-widget"
+          data-captcha-widget
+          data-sitekey={TURNSTILE_SITE_KEY}
+          data-appearance="interaction-only"
+          data-response-field-name="captcha_token"
+          data-size="flexible"
+          data-action={`lead_${source}`}
+        />
+      )
+    }
 
     <button class="btn btn-primary btn-lg btn-block" type="submit" data-submit>
       {f.submit}
@@ -140,7 +179,8 @@ const HeadingTag = headingTag as any;
     <span class="btn-es">{f.submitEs}</span>
 
     <p class="field-error form-error" data-form-error>
-      {f.errors.network.en} <em>{f.errors.network.es}</em>
+      {f.errors.network.en}
+      <em>{f.errors.network.es}</em>
     </p>
 
     <p class="t-caption consent">
@@ -160,19 +200,74 @@ const HeadingTag = headingTag as any;
     border-radius: var(--radius);
     padding: var(--s-6);
   }
-  .lead-form-title { margin-bottom: var(--s-2); }
-  .lead-form-sub { color: var(--c-slate); margin-bottom: var(--s-6); }
-  .consent { color: var(--c-slate); margin-top: var(--s-4); }
-  .form-error { margin-top: var(--s-4); }
-  form[data-state='error'] .form-error { display: block; }
+  .lead-form-title {
+    margin-bottom: var(--s-2);
+  }
+  .lead-form-sub {
+    color: var(--c-slate);
+    margin-bottom: var(--s-6);
+  }
+  .consent {
+    color: var(--c-slate);
+    margin-top: var(--s-4);
+  }
+  .form-error {
+    margin-top: var(--s-4);
+  }
+  .captcha-widget:not(:empty) {
+    margin-bottom: var(--s-4);
+  }
+  form[data-state='error'] .form-error {
+    display: block;
+  }
 </style>
 
 <script>
   import { formatPhone, isValidUsPhone, isValidEmail, isValidName } from '../lib/validation';
-  import { collectContext, newEventId } from '../lib/tracking';
+  import { collectContext } from '../lib/tracking';
+  import { CAPTCHA_PROVIDER, LEAD_ENDPOINT, RECAPTCHA_SITE_KEY } from '../lib/config';
 
-  const WEBHOOK = import.meta.env.PUBLIC_WEBHOOK_URL ?? '';
   const SENDING = 'Sending…';
+
+  function wait(ms: number): Promise<void> {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
+  }
+
+  /* Token del captcha. Turnstile lo deja en un campo oculto del formulario;
+     reCAPTCHA v3 lo entrega llamando a execute. */
+  async function getCaptchaToken(form: HTMLFormElement, action: string): Promise<string> {
+    if (CAPTCHA_PROVIDER === 'recaptcha') {
+      const grecaptcha = window.grecaptcha;
+      if (!RECAPTCHA_SITE_KEY || !grecaptcha) return '';
+      try {
+        await new Promise<void>((resolve) => grecaptcha.ready(resolve));
+        return await grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
+      } catch {
+        return '';
+      }
+    }
+
+    if (CAPTCHA_PROVIDER === 'turnstile') {
+      const field = form.querySelector<HTMLInputElement>('input[name="captcha_token"]');
+      for (let attempt = 0; attempt < 25; attempt += 1) {
+        if (field?.value) return field.value;
+        await wait(200);
+      }
+      return '';
+    }
+
+    return '';
+  }
+
+  function resetCaptcha(form: HTMLFormElement): void {
+    if (CAPTCHA_PROVIDER !== 'turnstile' || !window.turnstile) return;
+    const widget = form.querySelector<HTMLElement>('[data-captcha-widget]');
+    try {
+      window.turnstile.reset(widget ?? undefined);
+    } catch {
+      return;
+    }
+  }
 
   function markField(el: Element | null, invalid: boolean) {
     const field = el?.closest('[data-field]');
@@ -247,33 +342,36 @@ const HeadingTag = headingTag as any;
       const label = submit.textContent;
       submit.textContent = SENDING;
 
-      const payload = Object.fromEntries(new FormData(form).entries());
-      delete payload.company;
-
       try {
-        /* Sin webhook NO se puede continuar. Antes se registraba en consola y
-           se seguia a /thank-you: la persona veia la pantalla de gracias, el
-           lead se perdia y nadie la llamaba. Falla a la vista, con el mensaje
-           de error que ya existe y el telefono como salida. */
-        if (!WEBHOOK) throw new Error('PUBLIC_WEBHOOK_URL sin configurar');
+        const token = await getCaptchaToken(form, `lead_${source}`);
+        const payload = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+        delete payload.company;
+        payload.captcha_token = token;
 
-        const res = await fetch(WEBHOOK, {
+        const res = await fetch(LEAD_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
+          keepalive: true,
         });
-        if (!res.ok) throw new Error(String(res.status));
 
-        /* Marca de un solo uso. /thank-you la consume para no disparar el
-           Lead dos veces si la persona recarga, ni al entrar por la URL. */
+        let data: { ok?: boolean; error?: string } = {};
         try {
-          sessionStorage.setItem('jk_lead_pending', JSON.stringify({ source, eventId }));
-        } catch { /* modo privado: el evento simplemente no se dispara */ }
+          data = (await res.json()) as { ok?: boolean; error?: string };
+        } catch {
+          data = {};
+        }
 
-        window.location.href =
-          `/thank-you/?source=${encodeURIComponent(source)}&eid=${encodeURIComponent(eventId)}`;
+        // Solo se avanza a /thank-you si el lead salio de verdad.
+        if (!res.ok || data.ok !== true) {
+          throw new Error(data.error ?? String(res.status));
+        }
+
+        const eventId = String(payload.event_id ?? '');
+        window.location.href = `/thank-you/?source=${encodeURIComponent(source)}&eid=${encodeURIComponent(eventId)}`;
       } catch (err) {
         console.error('Fallo el envio del lead', err);
+        resetCaptcha(form);
         form.setAttribute('data-state', 'error');
         submit.disabled = false;
         submit.textContent = label ?? '';

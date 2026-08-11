@@ -13,65 +13,16 @@ export const UTM_KEYS = [
   'utm_term',
 ] as const;
 
-const STORE_KEY = 'jk_attr';
-
-interface Attribution {
-  fbclid: string;
-  clickedAt: number; // momento real de la llegada, no del envio
-  utms: Record<string, string>;
-}
-
-function readStore(): Attribution | null {
-  try {
-    const raw = sessionStorage.getItem(STORE_KEY);
-    return raw ? (JSON.parse(raw) as Attribution) : null;
-  } catch {
-    return null;
-  }
-}
-
-/* Se llama una vez por carga de pagina, lo antes posible.
-   Solo escribe si hay algo nuevo: la primera llegada es la que atribuye. */
-export function captureAttribution(): void {
-  const params = new URLSearchParams(window.location.search);
-  const fbclid = params.get('fbclid') ?? '';
-
-  const utms: Record<string, string> = {};
-  let hasUtm = false;
-  for (const key of UTM_KEYS) {
-    const v = params.get(key) ?? '';
-    utms[key] = v;
-    if (v) hasUtm = true;
-  }
-
-  if (!fbclid && !hasUtm) return; // nada que guardar
-  if (readStore()) return; // ya hay una primera llegada
-
-  try {
-    sessionStorage.setItem(
-      STORE_KEY,
-      JSON.stringify({ fbclid, clickedAt: Date.now(), utms } satisfies Attribution),
-    );
-  } catch {
-    /* modo privado: se sigue sin persistencia */
-  }
-}
-
 export function getCookie(name: string): string {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
   return match ? decodeURIComponent(match[2]) : '';
 }
 
-/* _fbc identifica el clic del anuncio. Si Meta aun no puso la cookie
-   (por ejemplo porque el pixel espera al consentimiento), se arma a mano.
-   El timestamp debe ser el de la llegada: Meta lo usa para la ventana
-   de atribucion. */
+/* _fbc identifica el clic del anuncio. Si Meta aun no puso la cookie,
+   se arma a partir del parametro fbclid de la URL. */
 export function getFbc(): string {
   const cookie = getCookie('_fbc');
   if (cookie) return cookie;
-
-  const stored = readStore();
-  if (stored?.fbclid) return `fb.1.${stored.clickedAt}.${stored.fbclid}`;
 
   const fbclid = new URLSearchParams(window.location.search).get('fbclid');
   if (!fbclid) return '';
@@ -94,25 +45,15 @@ export function newEventId(): string {
 
 export function getUtms(): Record<string, string> {
   const params = new URLSearchParams(window.location.search);
-  const stored = readStore();
   const out: Record<string, string> = {};
   for (const key of UTM_KEYS) {
-    out[key] = params.get(key) || stored?.utms?.[key] || '';
+    out[key] = params.get(key) ?? '';
   }
   return out;
 }
 
-/* Identificador unico del evento. El mismo valor lo manda el Pixel como
-   eventID y la CAPI como event_id; asi Meta cuenta un solo Lead en vez
-   de dos. Sin esto, Pixel y CAPI se duplican. */
-export function newEventId(): string {
-  const c = globalThis.crypto;
-  if (c && typeof c.randomUUID === 'function') return c.randomUUID();
-  return `lead-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-}
-
 /* Todo lo que acompana al lead ademas de los 5 campos visibles. */
-export function collectContext(source: string, stock: string, eventId: string) {
+export function collectContext(source: string, stock: string) {
   return {
     landing: LANDING_ID,
     source,

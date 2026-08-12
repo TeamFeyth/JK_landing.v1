@@ -24,7 +24,8 @@ import Icon from './Icon.astro';
 
     <a class="btn btn-secondary-inv btn-sm header-call" href={`tel:${site.phoneHref}`} data-call-link>
       <Icon name="phone" size={16} />
-      <span class="header-call-label">{copy.nav.call.en} </span>{site.phoneDisplay}
+      <span class="header-call-label">{copy.nav.call.en} </span>
+      <span class="header-call-number">{site.phoneDisplay}</span>
     </a>
   </div>
 </header>
@@ -69,6 +70,18 @@ import Icon from './Icon.astro';
   }
   .header-call { margin-left: auto; }
   .header-call-label { display: none; }
+  .header-call-number { white-space: nowrap; }
+
+  /* Bajo el minimo horizontal del logo el numero se quedaba partiendo en
+     2 lineas: mismo umbral que Logo.astro para el descriptor. */
+  @media (max-width: 400px) {
+    .header-inner { gap: var(--s-3); }
+    .header-call {
+      gap: var(--s-1);
+      padding: 0 var(--s-3);
+    }
+    .header-call-number { font-size: 13px; }
+  }
 
   @media (min-width: 768px) {
     .header-nav { display: flex; }

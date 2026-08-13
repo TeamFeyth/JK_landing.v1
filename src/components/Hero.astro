@@ -72,8 +72,9 @@ import Icon from './Icon.astro';
     inset: 0;
     z-index: -1;
     background-image: var(--heroImgSm);
-    background-size: cover;
-    background-position: center;
+    background-size: auto 140%;
+    background-position: center 45%;
+    background-repeat: no-repeat;
   }
   /* Velo al 55% sobre la foto. Sin esto el texto blanco no alcanza contraste */
   .hero-bg::after {
@@ -85,6 +86,8 @@ import Icon from './Icon.astro';
   @media (min-width: 768px) {
     .hero-bg {
       background-image: var(--heroImg);
+      background-size: cover;
+      background-position: center;
     }
   }
   @media (prefers-reduced-motion: no-preference) {

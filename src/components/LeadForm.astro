@@ -347,6 +347,9 @@ const HeadingTag = headingTag as any;
         delete payload.company;
         payload.captcha_token = token;
 
+        const testFlag = new URLSearchParams(window.location.search).get('jk_test');
+        if (testFlag === '1' || testFlag === 'true') payload.test = '1';
+
         const res = await fetch(LEAD_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

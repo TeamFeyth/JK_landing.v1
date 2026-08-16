@@ -90,7 +90,7 @@ export const copy = {
     sub: { en: '100+ vehicles in stock — model years 2016–2025.', es: 'Más de 100 vehículos disponibles, modelos 2016 a 2025.' },
     viewDetails: 'View details',
     financeMe: 'Finance me',
-    cardActionsEs: 'Ver detalles · Financiar',
+    cardActionsEs: 'Financiar',
     viewAll: 'View all vehicles',
     viewAllEs: 'Ver todo el inventario',
     prev: { en: 'Previous vehicles', es: 'Vehículos anteriores' },

@@ -94,9 +94,6 @@ const freq = v.paymentFrequency === 'bi-weekly' ? 'Bi-weekly' : v.paymentFrequen
     </div>
 
     <div class="vcard-actions">
-      <a class="btn btn-secondary btn-sm" href={v.detailUrl} rel="noopener">
-        {copy.vehicles.viewDetails}
-      </a>
       <button class="btn btn-secondary btn-sm" type="button" data-finance-me data-stock={v.stock ?? v.id}>
         {copy.vehicles.financeMe}
       </button>

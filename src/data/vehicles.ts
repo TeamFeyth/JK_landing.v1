@@ -2,10 +2,9 @@
    Fuente: DMS del cliente (Autodealers.Digital), leido de jkamalcars.com
    el 07/08/2026. El id es el mismo del registro en el DMS.
 
-   FOTOS: se sirven desde el CDN del DMS (thumbor). La ruta lleva /unsafe/,
-   o sea que no va firmada y se puede pedir cualquier tamano. Ver dmsPhoto().
-   Si el DMS activa proteccion de hotlinking, las fotos se caen: por eso
-   conviene descargarlas a /public/images/vehicles/ antes de encender pauta.
+   FOTOS: descargadas y optimizadas en /public/images/vehicles/ (webp 800x600).
+   Ya no dependen del CDN del DMS, asi no se caen si activan hotlinking.
+   dmsPhoto() se conserva como referencia por si hay que re-tirar del DMS.
 
    ENGANCHES: confirmados por Feyth el 07/08/2026. Mandan sobre lo que
    publica el sitio del cliente, que traia cifras contradictorias.
@@ -51,7 +50,7 @@ export const vehicles: Vehicle[] = [
     mileage: 149035, stock: '279227',
     downPayment: 1000, payment: null, paymentFrequency: null,
     price: null, termMonths: null, apr: null,
-    photo: dmsPhoto('5730951', '5730951_1.jpg'),
+    photo: '/images/vehicles/chevrolet-malibu-279227.webp',
     photoFile: '5730951_1.jpg',
     photoAlt: '2014 Chevrolet Malibu LS blanco en el lote de John Kamal Cars',
     detailUrl: 'https://jkamalcars.com/vehicles/5730951-2014-Chevrolet-Malibu/',
@@ -63,7 +62,7 @@ export const vehicles: Vehicle[] = [
     mileage: 84593, stock: '580523',
     downPayment: 1000, payment: null, paymentFrequency: null,
     price: null, termMonths: null, apr: null,
-    photo: dmsPhoto('9498431', '659881776522944.jpg'),
+    photo: '/images/vehicles/cadillac-srx-580523.webp',
     photoFile: '659881776522944.jpg',
     photoAlt: '2016 Cadillac SRX blanca en el lote de John Kamal Cars',
     detailUrl: 'https://jkamalcars.com/vehicles/9498431-2016-Cadillac-SRX/',
@@ -75,7 +74,7 @@ export const vehicles: Vehicle[] = [
     mileage: 104742, stock: '023616',
     downPayment: 1500, payment: null, paymentFrequency: null,
     price: null, termMonths: null, apr: null,
-    photo: dmsPhoto('7469809', '122551762366694.jpg'),
+    photo: '/images/vehicles/acura-ilx-023616.webp',
     photoFile: '122551762366694.jpg',
     photoAlt: '2016 Acura ILX azul en el lote de John Kamal Cars',
     detailUrl: 'https://jkamalcars.com/vehicles/7469809-2016-Acura-ILX/',
@@ -89,7 +88,7 @@ export const vehicles: Vehicle[] = [
     mileage: 107000, stock: '035985',
     downPayment: 1500, payment: null, paymentFrequency: null,
     price: null, termMonths: null, apr: null,
-    photo: dmsPhoto('5732699', '179541761596051.jpg'),
+    photo: '/images/vehicles/volkswagen-passat-035985.webp',
     photoFile: '179541761596051.jpg',
     photoAlt: '2017 Volkswagen Passat negro en el lote de John Kamal Cars',
     detailUrl: 'https://jkamalcars.com/vehicles/5732699-2017-Volkswagen-Passat/',
@@ -101,7 +100,7 @@ export const vehicles: Vehicle[] = [
     mileage: 77489, stock: '706452',
     downPayment: 2000, payment: null, paymentFrequency: null,
     price: null, termMonths: null, apr: null,
-    photo: dmsPhoto('8696803', '459851741707547.jpg'),
+    photo: '/images/vehicles/nissan-frontier-706452.webp',
     photoFile: '459851741707547.jpg',
     photoAlt: '2020 Nissan Frontier King Cab plateada en el lote de John Kamal Cars',
     detailUrl: 'https://jkamalcars.com/vehicles/8696803-2020-Nissan-Frontier/',
@@ -113,7 +112,7 @@ export const vehicles: Vehicle[] = [
     mileage: 84325, stock: '212255',
     downPayment: 2500, payment: null, paymentFrequency: null,
     price: null, termMonths: null, apr: null,
-    photo: dmsPhoto('11713907', '420741776533779.jpg'),
+    photo: '/images/vehicles/honda-accord-212255.webp',
     photoFile: '420741776533779.jpg',
     photoAlt: '2017 Honda Accord LX gris en el lote de John Kamal Cars',
     detailUrl: 'https://jkamalcars.com/vehicles/11713907-2017-Honda-Accord/',

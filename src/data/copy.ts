@@ -23,7 +23,7 @@ export const copy = {
       es: 'Financiamiento 100% propio en autos, camionetas y SUVs en Houston. Sin bancos. Sin score de crédito.',
     },
     bullets: [
-      { en: 'No credit check required', es: 'Sin revisión de crédito' },
+      { en: 'No credit needed', es: 'No necesitas crédito' },
       { en: 'Approved on your income, not your past', es: 'Aprobación por tus ingresos, no por tu pasado' },
       { en: 'Most applicants approved the same day', es: 'La mayoría recibe aprobación el mismo día' },
     ],

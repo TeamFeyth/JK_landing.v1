@@ -13,6 +13,17 @@ export const UTM_KEYS = [
   'utm_term',
 ] as const;
 
+/* Parametros que no son utm_ pero que la campana si manda en la URL.
+   adset y placement vienen del "Build a URL parameter" de Meta.
+   gclid / gbraid / wbraid los pone Google Ads solo, sin configurar nada. */
+export const AD_KEYS = [
+  'adset',
+  'placement',
+  'gclid',
+  'gbraid',
+  'wbraid',
+] as const;
+
 export function getCookie(name: string): string {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
   return match ? decodeURIComponent(match[2]) : '';
@@ -52,6 +63,15 @@ export function getUtms(): Record<string, string> {
   return out;
 }
 
+export function getAdParams(): Record<string, string> {
+  const params = new URLSearchParams(window.location.search);
+  const out: Record<string, string> = {};
+  for (const key of AD_KEYS) {
+    out[key] = params.get(key) ?? '';
+  }
+  return out;
+}
+
 /* Todo lo que acompana al lead ademas de los 5 campos visibles. */
 export function collectContext(source: string, stock: string) {
   return {
@@ -67,5 +87,6 @@ export function collectContext(source: string, stock: string) {
     fbp: getFbp(),
     fbclid: new URLSearchParams(window.location.search).get('fbclid') ?? '',
     ...getUtms(),
+    ...getAdParams(),
   };
 }

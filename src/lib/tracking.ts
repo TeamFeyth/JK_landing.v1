@@ -11,6 +11,10 @@ export const UTM_KEYS = [
   'utm_campaign',
   'utm_content',
   'utm_term',
+  /* utm_id lleva el ID de campana de Meta ({{campaign.id}}). Es la unica llave
+     de cruce que sobrevive a que renombren la campana, asi que vale mas que
+     utm_campaign para pegar contra el export de Ads Manager. */
+  'utm_id',
 ] as const;
 
 /* Parametros que no son utm_ pero que la campana si manda en la URL.

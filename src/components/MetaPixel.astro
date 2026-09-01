@@ -1,23 +1,47 @@
 ---
 /* Pixel de Meta.
-   Por defecto usa el pixel de prueba que entrego Feyth. Para cambiarlo se
-   pone PUBLIC_META_PIXEL_ID en Cloudflare; no hay que tocar este archivo.
+
+   ESTE ES EL UNICO LUGAR donde se inicializa el pixel. No volver a pegar el
+   snippet de Meta en un layout ni en una pagina: el snippet oficial arranca
+   con "if (f.fbq) return", asi que el primero que corra gana y el resto se
+   ignora en silencio. Un snippet con el ID escrito a mano en el <head> deja
+   PUBLIC_META_PIXEL_ID sin efecto y nadie se entera.
+
+   El ID sale de PUBLIC_META_PIXEL_ID (Cloudflare). Si no esta definida, el
+   pixel no carga.
+
+   Solo carga en el dominio de PUBLIC_SITE_URL, para que los deploys de
+   preview y localhost no ensucien el dataset de produccion.
 
    Si PUBLIC_REQUIRE_COOKIE_CONSENT es "true", el pixel espera al evento
    jk:consent que dispara el banner de cookies.
 
    El evento Lead se dispara en /thank-you con el eventID que viaja en la URL,
    para que la CAPI pueda deduplicar contra el mismo identificador. */
-import { META_PIXEL_ID, REQUIRE_COOKIE_CONSENT } from '../lib/config';
+import { META_PIXEL_ID, REQUIRE_COOKIE_CONSENT, SITE_URL } from '../lib/config';
 
 const pixelId = META_PIXEL_ID;
 const requireConsent = REQUIRE_COOKIE_CONSENT;
+const siteUrl = SITE_URL;
 ---
 
 {
   pixelId && (
-    <script is:inline define:vars={{ pixelId, requireConsent }}>
+    <script is:inline define:vars={{ pixelId, requireConsent, siteUrl }}>
       (function () {
+        /* Sin PUBLIC_SITE_URL no se bloquea nada: se asume un solo dominio y
+           se mantiene el comportamiento anterior. */
+        function hostAutorizado() {
+          if (!siteUrl) return true;
+          try {
+            return window.location.hostname === new URL(siteUrl).hostname;
+          } catch (e) {
+            return true;
+          }
+        }
+
+        if (!hostAutorizado()) return;
+
         function loadPixel() {
           if (window.fbq) return;
           !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?

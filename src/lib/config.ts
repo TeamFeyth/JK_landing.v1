@@ -2,15 +2,29 @@
    landing funcionando sin tocar nada en Cloudflare; cada uno se sobreescribe
    con su variable PUBLIC_. */
 
-/* Pixel de prueba entregado por Feyth. */
-const TEST_PIXEL_ID = '1042412788159075';
-
 /* Llave publica de prueba de Cloudflare Turnstile: siempre aprueba. */
 const TEST_TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
 
 export const LANDING_ID = 'lp1';
 
-export const META_PIXEL_ID = import.meta.env.PUBLIC_META_PIXEL_ID || TEST_PIXEL_ID;
+/* Sin fallback a proposito. Antes habia un pixel de prueba por defecto y eso
+   escondio durante semanas que PUBLIC_META_PIXEL_ID no estuviera surtiendo
+   efecto: los eventos salian igual, pero a un dataset que no era el de la
+   cuenta publicitaria. Un cero en Events Manager se detecta el primer dia;
+   datos en el dataset equivocado, no. */
+export const META_PIXEL_ID = import.meta.env.PUBLIC_META_PIXEL_ID ?? '';
+
+/* Dominio publico de ESTE despliegue. El pixel solo carga aqui, para que los
+   deploys de preview (*.pages.dev) y localhost no escriban en el dataset de
+   produccion. */
+export const SITE_URL = import.meta.env.PUBLIC_SITE_URL ?? '';
+
+/* Nombre de evento propio de esta landing.
+   Las dos landings mandan el mismo evento estandar Lead al mismo dataset, y
+   hasta ahora solo se distinguian por la URL o por un parametro personalizado.
+   Meta descarta ambas cosas en datasets con restricciones de categoria, asi
+   que ese criterio dejo de funcionar. El NOMBRE del evento si sobrevive. */
+export const LEAD_EVENT_NAME = `${LANDING_ID}_lead`;
 
 export const REQUIRE_COOKIE_CONSENT =
   (import.meta.env.PUBLIC_REQUIRE_COOKIE_CONSENT ?? 'true') === 'true';

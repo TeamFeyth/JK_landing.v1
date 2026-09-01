@@ -51,6 +51,8 @@ import { copy } from '../data/copy';
 </style>
 
 <script>
+  import { LEAD_EVENT_NAME } from '../lib/config';
+
   const params = new URLSearchParams(window.location.search);
   const source = params.get('source') ?? 'unknown';
   const eventId = params.get('eid') ?? '';
@@ -79,12 +81,24 @@ import { copy } from '../data/copy';
     const fbq = window.fbq;
     if (typeof fbq !== 'function') return false;
 
-    // Un solo evento estandar Lead. Tres eventos distintos optimizarian peor.
-    // El eventID es lo que permite deduplicar contra la CAPI.
+    // Lead estandar: es contra el que optimizan las campanas y el que ya tiene
+    // historico en el dataset. No se toca.
+    //
+    // LEAD_EVENT_NAME (lp1_lead) es el que identifica la landing. Las dos
+    // landings mandan Lead al mismo dataset y antes solo se distinguian por el
+    // path /thank-you o por el parametro source; Meta descarta las dos cosas
+    // en datasets con restricciones de categoria, asi que las conversiones
+    // personalizadas por URL dejaron de contar. El nombre del evento no es un
+    // parametro de URL y si sobrevive.
+    //
+    // Va el mismo eventID en ambos a proposito: Meta deduplica por la pareja
+    // (nombre de evento, eventID), asi que dos nombres distintos no se pisan.
     if (eventId) {
       fbq('track', 'Lead', { source }, { eventID: eventId });
+      fbq('trackCustom', LEAD_EVENT_NAME, { source }, { eventID: eventId });
     } else {
       fbq('track', 'Lead', { source });
+      fbq('trackCustom', LEAD_EVENT_NAME, { source });
     }
 
     markFired();

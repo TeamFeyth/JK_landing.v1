@@ -12,6 +12,7 @@ import '../styles/components.css';
 import Captcha from '../components/Captcha.astro';
 import MetaPixel from '../components/MetaPixel.astro';
 import { site } from '../data/site';
+import { FB_DOMAIN_VERIFICATION } from '../lib/config';
 
 interface Props {
   title: string;
@@ -75,6 +76,9 @@ const jsonLd = {
          No volver a pegarlo aqui. */
     }
     <meta charset="utf-8" />
+    {FB_DOMAIN_VERIFICATION && (
+      <meta name="facebook-domain-verification" content={FB_DOMAIN_VERIFICATION} />
+    )}
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}

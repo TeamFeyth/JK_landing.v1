@@ -19,6 +19,17 @@ export const META_PIXEL_ID = import.meta.env.PUBLIC_META_PIXEL_ID ?? '';
    produccion. */
 export const SITE_URL = import.meta.env.PUBLIC_SITE_URL ?? '';
 
+/* Token de verificacion de dominio de Meta.
+   Necesario para configurar los 8 eventos priorizados de Aggregated Event
+   Measurement. Sin eso, el trafico de iOS con ATT no atribuye, y la mayoria
+   de estos leads llegan de m.facebook.com en movil.
+
+   El token lo genera el equipo de ads en Business Settings -> Brand Safety ->
+   Domains, en el portafolio que es DUENO del dataset (Feyth Marketing). Cada
+   dominio tiene el suyo, asi que este valor NO es el mismo en los dos
+   proyectos. Se pega en Cloudflare y listo, no hace falta tocar codigo. */
+export const FB_DOMAIN_VERIFICATION = import.meta.env.PUBLIC_FB_DOMAIN_VERIFICATION ?? '';
+
 /* Nombre de evento propio de esta landing.
    Las dos landings mandan el mismo evento estandar Lead al mismo dataset, y
    hasta ahora solo se distinguian por la URL o por un parametro personalizado.

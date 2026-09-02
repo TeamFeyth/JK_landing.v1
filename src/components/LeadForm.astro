@@ -154,6 +154,7 @@ const HeadingTag = headingTag as any;
     <input type="hidden" name="utm_campaign" value="" />
     <input type="hidden" name="utm_content" value="" />
     <input type="hidden" name="utm_term" value="" />
+    <input type="hidden" name="utm_id" value="" />
     <input type="hidden" name="landing" value="" />
     <input type="hidden" name="event_id" value="" />
     <input type="hidden" name="landing_url" value="" />
@@ -338,8 +339,21 @@ const HeadingTag = headingTag as any;
       const stock = form.querySelector<HTMLInputElement>('[data-stock]')?.value ?? '';
       const ctx = collectContext(source, stock);
       for (const [key, value] of Object.entries(ctx)) {
-        const hidden = form.querySelector<HTMLInputElement>(`input[type="hidden"][name="${key}"]`);
-        if (hidden) hidden.value = String(value);
+        let hidden = form.querySelector<HTMLInputElement>(`input[type="hidden"][name="${key}"]`);
+
+        /* El payload sale de FormData, asi que un dato sin su <input> no viaja.
+           Antes esto era "if (hidden) hidden.value = ...": si alguien agregaba
+           una llave a collectContext y se olvidaba del campo oculto, el dato se
+           perdia en silencio y nada fallaba. Exactamente lo que paso con
+           utm_id. Ahora el campo se crea si no existe. */
+        if (!hidden) {
+          hidden = document.createElement('input');
+          hidden.type = 'hidden';
+          hidden.name = key;
+          form.appendChild(hidden);
+        }
+
+        hidden.value = String(value);
       }
 
       submit.disabled = true;

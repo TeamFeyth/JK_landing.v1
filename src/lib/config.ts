@@ -37,6 +37,18 @@ export const FB_DOMAIN_VERIFICATION = import.meta.env.PUBLIC_FB_DOMAIN_VERIFICAT
    que ese criterio dejo de funcionar. El NOMBRE del evento si sobrevive. */
 export const LEAD_EVENT_NAME = `${LANDING_ID}_lead`;
 
+/* Contenedor de Google Tag Manager de ESTE dominio.
+
+   LP1 vive en contact.jkamalcars.com y le toca GTM-KPTBZ6BV. El otro
+   contenedor, GTM-WVD5ZRKB, es el de getapproved.jkamalcars.com (LP2): no
+   son intercambiables, cada uno tiene sus propias etiquetas y disparadores.
+
+   Aqui si hay valor por defecto, al reves que con el pixel: el contenedor es
+   fijo por dominio y no cambia entre despliegues, asi que no hay riesgo de
+   mandar datos al lugar equivocado. Dejar PUBLIC_GTM_ID vacia en Cloudflare
+   apaga GTM por completo, que es lo que conviene en Preview. */
+export const GTM_ID = import.meta.env.PUBLIC_GTM_ID ?? 'GTM-KPTBZ6BV';
+
 export const REQUIRE_COOKIE_CONSENT =
   (import.meta.env.PUBLIC_REQUIRE_COOKIE_CONSENT ?? 'true') === 'true';
 

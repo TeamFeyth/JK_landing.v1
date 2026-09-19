@@ -11,6 +11,7 @@ import '../styles/components.css';
 
 import Captcha from '../components/Captcha.astro';
 import MetaPixel from '../components/MetaPixel.astro';
+import GoogleTagManager from '../components/GoogleTagManager.astro';
 import { site } from '../data/site';
 import { FB_DOMAIN_VERIFICATION } from '../lib/config';
 
@@ -80,6 +81,10 @@ const jsonLd = {
       <meta name="facebook-domain-verification" content={FB_DOMAIN_VERIFICATION} />
     )}
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/* GTM va lo mas arriba posible, solo debajo del charset y el viewport */}
+    <GoogleTagManager part="head" />
+
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     {blockIndex && <meta name="robots" content="noindex, nofollow" />}
@@ -115,6 +120,7 @@ const jsonLd = {
   </head>
 
   <body>
+    <GoogleTagManager part="body" />
     <slot />
   </body>
 </html>

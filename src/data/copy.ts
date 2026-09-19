@@ -50,12 +50,26 @@ export const copy = {
       name: { en: 'Name', es: 'Nombre' },
       phone: { en: 'Phone', es: 'Teléfono' },
       email: { en: 'Email', es: 'Correo electrónico' },
-      openLoan: { en: 'Open auto loan on another vehicle?', es: '¿Tienes un préstamo abierto en otro vehículo?' },
-      employed: { en: 'Employed in the last 6 months?', es: '¿Has trabajado en los últimos 6 meses?' },
+      /* Calificadores nuevos (change request). Reemplazan a las dos preguntas
+         Si/No anteriores: ahora se pregunta por enganche e ingreso, que es lo
+         que el underwriting de la casa usa de verdad para rutear el lead. */
+      downPayment: { en: 'Down Payment Amount', es: 'Monto del enganche' },
+      monthlyIncome: {
+        en: 'Monthly Income (after taxes)',
+        es: 'Ingreso mensual (después de impuestos)',
+      },
       selectOne: { en: 'Select one', es: 'Selecciona una' },
-      yes: { en: 'Yes', es: 'Sí' },
-      no: { en: 'No', es: 'No' },
     },
+
+    /* Opciones de los dos calificadores. El valor que viaja al CRM es el mismo
+       texto que se ve en pantalla, para que en Neo y en el Sheet se lea sin
+       traducir nada. No se traducen al espanol a proposito: son cantidades.
+
+       ESTA LISTA ESTA ESPEJADA en functions/api/lead.js, que no puede importar
+       TypeScript. Si se toca aqui, hay que tocarla alla o el servidor va a
+       rechazar la opcion nueva con 422. */
+    downPaymentOptions: ['$1,000', '$1,500', '$2,000+'],
+    monthlyIncomeOptions: ['$2,000', '$3,000', '$4,000+'],
 
     errors: {
       name: { en: 'Enter your full name.', es: 'Escribe tu nombre completo.' },

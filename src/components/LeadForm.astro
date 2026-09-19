@@ -103,18 +103,23 @@ const HeadingTag = headingTag as any;
       </p>
     </div>
 
-    <div class="field" data-field="open_loan">
-      <label class="field-label-static" for={id('open_loan')}>
-        {f.fields.openLoan.en}
+    <div class="field" data-field="down_payment_amount">
+      <label class="field-label-static" for={id('down_payment_amount')}>
+        {f.fields.downPayment.en}
         <span class="req">*</span>
-        <span class="lbl-es">{f.fields.openLoan.es}</span>
+        <span class="lbl-es">{f.fields.downPayment.es}</span>
       </label>
-      <select class="field-select" id={id('open_loan')} name="open_loan" data-empty="true" required>
+      <select
+        class="field-select"
+        id={id('down_payment_amount')}
+        name="down_payment_amount"
+        data-empty="true"
+        required
+      >
         <option value="" selected disabled hidden
           >{f.fields.selectOne.en} / {f.fields.selectOne.es}</option
         >
-        <option value="Yes">{f.fields.yes.en} / {f.fields.yes.es}</option>
-        <option value="No">{f.fields.no.en} / {f.fields.no.es}</option>
+        {f.downPaymentOptions.map((option) => <option value={option}>{option}</option>)}
       </select>
       <p class="field-error" data-error>
         {f.errors.select.en}
@@ -122,18 +127,23 @@ const HeadingTag = headingTag as any;
       </p>
     </div>
 
-    <div class="field" data-field="employed">
-      <label class="field-label-static" for={id('employed')}>
-        {f.fields.employed.en}
+    <div class="field" data-field="monthly_income_after_taxes">
+      <label class="field-label-static" for={id('monthly_income_after_taxes')}>
+        {f.fields.monthlyIncome.en}
         <span class="req">*</span>
-        <span class="lbl-es">{f.fields.employed.es}</span>
+        <span class="lbl-es">{f.fields.monthlyIncome.es}</span>
       </label>
-      <select class="field-select" id={id('employed')} name="employed" data-empty="true" required>
+      <select
+        class="field-select"
+        id={id('monthly_income_after_taxes')}
+        name="monthly_income_after_taxes"
+        data-empty="true"
+        required
+      >
         <option value="" selected disabled hidden
           >{f.fields.selectOne.en} / {f.fields.selectOne.es}</option
         >
-        <option value="Yes">{f.fields.yes.en} / {f.fields.yes.es}</option>
-        <option value="No">{f.fields.no.en} / {f.fields.no.es}</option>
+        {f.monthlyIncomeOptions.map((option) => <option value={option}>{option}</option>)}
       </select>
       <p class="field-error" data-error>
         {f.errors.select.en}
@@ -313,8 +323,8 @@ const HeadingTag = headingTag as any;
         ['name', isValidName(String(data.get('name') ?? ''))],
         ['phone', isValidUsPhone(String(data.get('phone') ?? ''))],
         ['email', isValidEmail(String(data.get('email') ?? ''))],
-        ['open_loan', String(data.get('open_loan') ?? '') !== ''],
-        ['employed', String(data.get('employed') ?? '') !== ''],
+        ['down_payment_amount', String(data.get('down_payment_amount') ?? '') !== ''],
+        ['monthly_income_after_taxes', String(data.get('monthly_income_after_taxes') ?? '') !== ''],
       ];
 
       let firstBad: HTMLElement | null = null;

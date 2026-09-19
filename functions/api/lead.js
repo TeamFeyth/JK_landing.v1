@@ -43,6 +43,19 @@ const DEFAULTS = {
   leadService: '',
 };
 
+/* Opciones validas de los dos calificadores.
+
+   Es una lista blanca, no texto libre: el <select> del navegador se puede
+   editar desde las devtools, asi que el servidor vuelve a comprobar que lo
+   que llego sea una de estas tres. Cualquier otra cosa se queda en '' y la
+   validacion responde 422.
+
+   ESTA LISTA ESTA ESPEJADA en src/data/copy.ts, que es de donde salen las
+   opciones que se pintan. Si se toca una, hay que tocar la otra. */
+
+const DOWN_PAYMENT_OPTIONS = ['$1,000', '$1,500', '$2,000+'];
+const MONTHLY_INCOME_OPTIONS = ['$2,000', '$3,000', '$4,000+'];
+
 const DEALER = {
   id: '104878',
   name: 'John Kamal Cars',
@@ -133,8 +146,11 @@ function normalizeLead(body) {
     name: str(body.name).slice(0, 120),
     phone: digits(str(body.phone)),
     email: str(body.email).slice(0, 160),
-    open_loan: yesNo(str(body.open_loan)),
-    employed: yesNo(str(body.employed)),
+    down_payment_amount: oneOf(str(body.down_payment_amount), DOWN_PAYMENT_OPTIONS),
+    monthly_income_after_taxes: oneOf(
+      str(body.monthly_income_after_taxes),
+      MONTHLY_INCOME_OPTIONS
+    ),
     test: truthy(body.test),
     page_url: str(body.page_url).slice(0, 500),
     landing_url: str(body.landing_url).slice(0, 500),
@@ -164,8 +180,8 @@ function validateLead(lead) {
   if (lead.name.length < 2 || !/[a-zà-ÿ]/i.test(lead.name)) bad.push('name');
   if (lead.phone.length !== 10 || /^[01]/.test(lead.phone)) bad.push('phone');
   if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(lead.email)) bad.push('email');
-  if (!lead.open_loan) bad.push('open_loan');
-  if (!lead.employed) bad.push('employed');
+  if (!lead.down_payment_amount) bad.push('down_payment_amount');
+  if (!lead.monthly_income_after_taxes) bad.push('monthly_income_after_taxes');
   return bad;
 }
 
@@ -296,8 +312,8 @@ function buildComments(lead) {
     ['gbraid', lead.gbraid],
     ['wbraid', lead.wbraid],
     ['Source Detail', lead.lead_source_detail],
-    ['Open auto loan on another vehicle', lead.open_loan],
-    ['Employed in the last 6 months', lead.employed],
+    ['Down Payment Amount', lead.down_payment_amount],
+    ['Monthly Income (after taxes)', lead.monthly_income_after_taxes],
     ['Form', lead.source],
     ['Landing', lead.landing],
     ['Event ID', lead.event_id],
@@ -457,11 +473,19 @@ function digits(value) {
   return only;
 }
 
-function yesNo(value) {
-  const normalized = String(value || '').trim().toLowerCase();
-  if (normalized === 'yes' || normalized === 'si' || normalized === 'sí') return 'Yes';
-  if (normalized === 'no') return 'No';
-  return '';
+/* Devuelve la opcion canonica de la lista, o '' si lo que llego no esta.
+
+   La segunda pasada compara solo digitos y el '+', asi que un cliente que
+   mande "2000+" o "$2000" en vez de "$2,000+" sigue entrando. Es tolerancia
+   de formato, no de valores: lo que no coincida con ninguna opcion se cae. */
+function oneOf(value, allowed) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  if (allowed.includes(raw)) return raw;
+
+  const key = raw.replace(/[^0-9+]/g, '');
+  if (!key) return '';
+  return allowed.find((option) => option.replace(/[^0-9+]/g, '') === key) || '';
 }
 
 function truthy(value) {

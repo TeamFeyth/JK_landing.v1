@@ -1,0 +1,37 @@
+---
+/* Google Tag Manager. El snippet oficial son dos pedazos que van en sitios
+   distintos, asi que este componente se monta dos veces con `part`:
+
+     part="head"  lo mas arriba posible dentro de <head>
+     part="body"  justo despues de <body>, para el <noscript>
+
+   Va `is:inline` en los dos: el loader de GTM tiene que quedar tal cual en el
+   HTML, sin que Astro lo empaquete ni lo mueva al bundle.
+
+   El ID sale de config.ts (PUBLIC_GTM_ID, con el contenedor de este dominio
+   como valor por defecto). Con el ID vacio no se renderiza nada.
+
+   NOTA para el equipo de ads: esto NO pasa por el banner de cookies. El pixel
+   de Meta si espera al consentimiento (PUBLIC_REQUIRE_COOKIE_CONSENT), GTM
+   arranca en la carga. Si adentro del contenedor hay una etiqueta de Meta
+   Pixel, va a haber doble disparo con <MetaPixel />. Revisar el contenedor
+   antes de publicar. */
+import { GTM_ID } from '../lib/config';
+
+interface Props {
+  part: 'head' | 'body';
+}
+const { part } = Astro.props;
+
+const loader = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');`;
+
+const noscript = `<iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
+---
+
+{GTM_ID && part === 'head' && <script is:inline set:html={loader} />}
+{GTM_ID && part === 'body' && <noscript set:html={noscript} />}

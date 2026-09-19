@@ -145,6 +145,35 @@ venta se puede deduplicar contra el evento del pixel.
 
 ---
 
+## 4b. Google Tag Manager
+
+Cada landing tiene su propio contenedor. **No son intercambiables**, cada uno
+lleva sus etiquetas y disparadores:
+
+| Landing | Dominio | Contenedor |
+|---|---|---|
+| LP1 (esta) | `contact.jkamalcars.com` | `GTM-KPTBZ6BV` |
+| LP2 | `getapproved.jkamalcars.com` | `GTM-WVD5ZRKB` |
+
+El snippet vive en `src/components/GoogleTagManager.astro` y se monta dos veces
+desde el layout: `part="head"` arriba del `<head>` y `part="body"` justo después
+de `<body>` para el `<noscript>`. El ID sale de `PUBLIC_GTM_ID`, con el
+contenedor de este dominio como valor por defecto. Vaciando esa variable, GTM
+no se renderiza: conviene dejarla vacía en Preview.
+
+**Dos cosas que hay que revisar dentro del contenedor antes de publicar:**
+
+1. **GTM no espera al banner de cookies.** El pixel de Meta sí
+   (`PUBLIC_REQUIRE_COOKIE_CONSENT`), GTM arranca en la carga. Es el
+   comportamiento estándar del snippet y es lo que pidió el change request,
+   pero deja las dos herramientas con criterios distintos de consentimiento.
+2. **Si el contenedor tiene una etiqueta de Meta Pixel, va a haber doble
+   disparo** contra `<MetaPixel />`. Los `PageView` se contarían dos veces y el
+   `Lead` también. O se quita esa etiqueta del contenedor, o se quita
+   `<MetaPixel />` del layout. Las dos cosas juntas, no.
+
+---
+
 ## 5. Variables en Cloudflare Pages
 
 Van en **Settings → Environment variables**, y ojo: Production y Preview son listas
@@ -159,6 +188,7 @@ separadas, Preview no hereda nada. Cada cambio exige redeploy manual.
 | `PUBLIC_TURNSTILE_SITE_KEY` | usa la llave de prueba que siempre aprueba |
 | `PUBLIC_RECAPTCHA_SITE_KEY` | sin reCAPTCHA |
 | `PUBLIC_REQUIRE_COOKIE_CONSENT` | `true` |
+| `PUBLIC_GTM_ID` | `GTM-KPTBZ6BV` (el contenedor de LP1) |
 | `PUBLIC_LEAD_ENDPOINT` | `/api/lead` |
 
 ### Privadas (solo las lee la función — marcar Encrypt las que tengan secreto)
@@ -195,7 +225,7 @@ curl -X POST https://TU-DOMINIO/api/lead \
   -H 'Content-Type: application/json' \
   -d '{"landing":"lp1","source":"hero","name":"Prueba Feyth",
        "phone":"8325550142","email":"prueba@feyth.com",
-       "open_loan":"no","employed":"yes",
+       "down_payment_amount":"$1,500","monthly_income_after_taxes":"$3,000",
        "captcha_token":"XXXX.DUMMY.XXXX"}'
 ```
 

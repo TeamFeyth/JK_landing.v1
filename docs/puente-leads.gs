@@ -70,6 +70,22 @@ function deliverEmail(lead, adf) {
 
 /* Respaldo en Sheet */
 
+/* Orden de columnas, despues del change request de los calificadores:
+
+     A  Fecha            H  Down Payment Amount   (NUEVA)
+     B  TEST / LIVE      I  Monthly Income        (NUEVA)
+     C  Landing          J  Stock
+     D  Form             K  Event ID
+     E  Nombre           L  Campaign
+     F  Telefono         M  fbclid
+     G  Email            N  ADF XML
+
+   OJO: las dos columnas nuevas entran en medio, asi que las filas viejas del
+   Sheet quedan corridas dos posiciones a partir de la H. Antes de redeployar
+   el script conviene una de dos cosas: arrancar una pestana nueva con estos
+   encabezados, o mover las columnas viejas a mano. Si se deja como esta, los
+   leads nuevos se leen bien pero el historial queda desalineado. */
+
 function backupRow(lead) {
   if (!SHEET_ID) return;
   var sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
@@ -81,6 +97,8 @@ function backupRow(lead) {
     lead.name || '',
     lead.phone || '',
     lead.email || '',
+    lead.down_payment_amount || '',
+    lead.monthly_income_after_taxes || '',
     lead.stock || '',
     lead.event_id || '',
     lead.utm_campaign || '',
